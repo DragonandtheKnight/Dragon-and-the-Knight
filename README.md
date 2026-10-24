@@ -40,4 +40,8 @@ Please check online version by following URL ⬇️
 [Team UI Sketch Board](https://www.tldraw.com/p/O_-2-Nw9QFSGrI7shEAze)
 
 ## Class Diagram
+
+<img width="3209" height="3723" alt="shapes at 26-10-24 16 54 44" src="https://github.com/user-attachments/assets/f481bbf6-c273-4300-9aa0-ad42ff62cba8" />
+
+
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
