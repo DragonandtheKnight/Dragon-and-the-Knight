@@ -31,17 +31,13 @@ Your project description should summarize the project you are proposing. Be sure
     - Shop System: Players can use in-game currency to purchase cards, upgrades, and other useful items.
 
 
-## User Interface Specification
-<img width="2535" height="839" alt="shapes at 26-10-23 21 51 19" src="https://github.com/user-attachments/assets/455cd95f-7eb3-4e53-ba5b-27ec451aeea5" />
+## User Interface Specification- (Navigation Diagram&Screen Layouts)
+<img width="7331" height="3908" alt="shapes at 26-10-24 16 48 25" src="https://github.com/user-attachments/assets/36d55315-6924-4178-b5f0-2f43197e6931" />
 
-[Team UI Sketch Board](https://www.tldraw.com/p/O_-2-Nw9QFSGrI7shEAze?d=v-321.-557.3026.2416.page)
+Please check online version by following URL ⬇️
 
 
-### Navigation Diagram
-> Draw a diagram illustrating how the user can navigate from one screen to another. Here is an [example](https://creately.com/diagram/example/ikfqudv82/user-navigation-diagram-classic?r=v). Nodes represent the different screens in your program and arrows represent the way to navigate from one screen to another. It can be useful to label each symbol that represents a screen so that you can reference the screens in the next section or the rest of the document if necessary. Give a brief description of what the diagram represents.
-
-### Screen Layouts
-> Include the layout of each of your screens. The layout should describe the screen’s major components such as menus and prompts for user inputs and expected output, or any graphical user interface components if applicable (e.g. buttons, text boxes, etc). Explain what is on the layout, and the purpose of each menu item, button, etc. If many screens share the same layout, start by describing the general layout and then list the screens that will be using that layout and the differences between each of them.
+[Team UI Sketch Board](https://www.tldraw.com/p/O_-2-Nw9QFSGrI7shEAze)
 
 ## Class Diagram
- > Include a **class diagram(s)** for your project and a **description** of the diagram(s). Your class diagram(s) should include all the main classes you plan for the project. This should be in sufficient detail that another group could pick up the project this point and successfully complete it. Use proper UML notation (as discussed in the course slides).
+[Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
