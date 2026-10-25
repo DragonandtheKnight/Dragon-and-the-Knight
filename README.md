@@ -45,3 +45,15 @@ Please check online version by following URL ⬇️
 
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
+
+## Testing
+
+We follow **Test-Driven Development (TDD)** for this project. All test code is located in the `/test` directory.
+
+Prof. Watkinson allows the use of AI **only for TDD-related testing** (in Oct 20 Tue), not for implementing any project's source code.
+
+To ensure transparency, here is repository to record all AI usage:
+
+**[AI-TDD Transparency Reports](https://github.com/DragonandtheKnight/AI-TDD-Transparency)**
+
+The reports follow the same directory structure as our source code and record AI inputs, outputs, tools used, and responsible contributors.
