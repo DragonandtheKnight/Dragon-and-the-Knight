@@ -10,6 +10,7 @@ class Goblin:public Enemy{
         EnemyType goblin_type_level(int level);
         int goblin_max_hp_level(int level);
         int goblin_dfficulty_level(int level);
+        bool goblin_was_last_move_dash_;
     public:
         Goblin(int level);
         EnemySkill calMove() override;
