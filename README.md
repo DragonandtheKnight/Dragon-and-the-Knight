@@ -47,7 +47,6 @@ Please check online version by following URL ⬇️
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
 
 ### Class Diagram Description
-The class diagram shows main classes in our game. We divided the game into different classes to make the code easier to organize and allows different team members to work on different parts.
 
 The Game class controls the main game process including starting the game, running the game, moving to the next floor, and ending the game. The FloorMap class manages the map and the paths that players can choose. The Level class is an abstract base class, and Combat, Shop, Rest, Event, and Entertainment inherit from it. Each level has different functions. For example, players can fight monsters in Combat, buy cards in Shop, and recover HP in Rest.
 
