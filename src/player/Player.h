@@ -6,41 +6,28 @@
 #include "card/Deck.h"
 
 class Player {
- private:
-  std::string name;
-  int hp;
-  int maxHp;
-  int block = 0;
-  int energy = 0;
-  int gold = 0;
-  Deck deck;
-
  public:
-  // Constructor
-  Player(std::string name, int maxHp);
+  Player(std::string name, int max_hp);
 
   // Health and defense
-  void takeDamage(int amount);
-  void heal(int amount);
-  void addBlock(int amount);
-  bool isAlive() const;
+  void TakeDamage(int amount);
+  void Heal(int amount);
+  void AddBlock(int amount);
+  bool IsAlive() const;
 
   // Gold
-  void gainGold(int amount);
-  bool spendGold(int amount);
+  void GainGold(int amount);
+  bool SpendGold(int amount);
 
   // Energy
-  void resetEnergy();
+  void ResetEnergy();
 
-  // Getters
-  const std::string& getName() const;
-  int getHp() const;
-  int getMaxHp() const;
-  int getBlock() const;
-  int getEnergy() const;
-  int getGold() const;
-
-  // Deck access
-  Deck& getDeck();
-  const Deck& getDeck() const;
+ private:
+  std::string name_;
+  int hp_;
+  int max_hp_;
+  int block_ = 0;
+  int energy_ = 0;
+  int gold_ = 0;
+  Deck deck_;
 };

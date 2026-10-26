@@ -1,101 +1,65 @@
-
 #include "Player.h"
 
 #include <algorithm>
 #include <utility>
 
-// Constructor
-Player::Player(std::string name, int maxHp)
-    : name(std::move(name)),
-      hp(std::max(1, maxHp)),
-      maxHp(std::max(1, maxHp)) {}
+Player::Player(std::string name, int max_hp)
+    : name_(std::move(name)),
+      hp_(std::max(1, max_hp)),
+      max_hp_(std::max(1, max_hp)) {}
 
-// Take damage: block absorbs damage first
-void Player::takeDamage(int amount) {
+// Block damage before HP
+void Player::TakeDamage(int amount) {
   if (amount <= 0) {
     return;
   }
 
-  int blocked = std::min(block, amount);
-  block -= blocked;
+  int blocked = std::min(block_, amount);
+  block_ -= blocked;
   amount -= blocked;
 
-  hp = std::max(0, hp - amount);
+  hp_ = std::max(0, hp_ - amount);
 }
 
-// Heal without exceeding maximum HP
-void Player::heal(int amount) {
+// Restore HP without exceeding maximum HP
+void Player::Heal(int amount) {
   if (amount <= 0) {
     return;
   }
 
-  hp = std::min(maxHp, hp + amount);
+  hp_ += std::min(amount, max_hp_ - hp_);
 }
 
-// Increase block
-void Player::addBlock(int amount) {
+// Increase the player's block
+void Player::AddBlock(int amount) {
   if (amount > 0) {
-    block += amount;
+    block_ += amount;
   }
 }
 
-// Check whether player is alive
-bool Player::isAlive() const {
-  return hp > 0;
-}
-
-// Gain gold
-void Player::gainGold(int amount) {
+// Add gold to the player
+void Player::GainGold(int amount) {
   if (amount > 0) {
-    gold += amount;
+    gold_ += amount;
   }
 }
 
-// Spend gold if sufficient
-bool Player::spendGold(int amount) {
-  if (amount < 0 || gold < amount) {
+// Spend gold if player has enough
+bool Player::SpendGold(int amount) {
+  if (amount < 0 || gold_ < amount) {
     return false;
   }
 
-  gold -= amount;
+  gold_ -= amount;
   return true;
 }
 
-// Reset energy at the start of each turn
-void Player::resetEnergy() {
-  energy = 3;
+// Reset energy at the beginning of a turn.
+void Player::ResetEnergy() {
+  energy_ = 3;
 }
 
-// Getters
-const std::string& Player::getName() const {
-  return name;
-}
-
-int Player::getHp() const {
-  return hp;
-}
-
-int Player::getMaxHp() const {
-  return maxHp;
-}
-
-int Player::getBlock() const {
-  return block;
-}
-
-int Player::getEnergy() const {
-  return energy;
-}
-
-int Player::getGold() const {
-  return gold;
-}
-
-// Deck access
-Deck& Player::getDeck() {
-  return deck;
-}
-
-const Deck& Player::getDeck() const {
-  return deck;
+// Check whether the player is alive.
+bool Player::IsAlive() const {
+  return hp_ > 0;
 }
