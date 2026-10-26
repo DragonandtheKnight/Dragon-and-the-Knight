@@ -13,7 +13,7 @@ All C++ code follows the [**Google C++ Style Guide**](https://google.github.io/s
 - **Format** with clang-format. The repository's `.clang-format` selects Google style:
 
   ```
-  clang-format -i $(find src test -name '*.h' -o -name '*.cpp')
+  clang-format -i $(find src test -name '*.h' -o -name '*.cc' -o -name '*.cpp')
   ```
 
 - **Lint** with cpplint before you commit (`brew install cpplint` or `pip install cpplint`):
@@ -25,6 +25,7 @@ All C++ code follows the [**Google C++ Style Guide**](https://google.github.io/s
 - Do not use any namespace for the code.
 - Use `#pragma once` in every header.
 - Include what you use: add `#include <string>`, `#include <vector>`, etc. in each file that uses them, even when another header already includes them.
+- Use angle brackets only for the C++ standard library. Include third-party libraries with quotes (`#include "ftxui/dom/elements.hpp"`, `#include "gtest/gtest.h"`), otherwise clang-format and cpplint disagree on include order.
 
 ## Team Collaboration
 
