@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -21,6 +20,18 @@ class Player {
 
   // Energy
   void ResetEnergy();
+
+  // Getters
+  const std::string& GetName() const;
+  int GetHp() const;
+  int GetMaxHp() const;
+  int GetBlock() const;
+  int GetEnergy() const;
+  int GetGold() const;
+
+  // Deck access
+  Deck& GetDeck();
+  const Deck& GetDeck() const; 
 
  private:
   std::string name_;

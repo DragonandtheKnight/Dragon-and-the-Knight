@@ -63,3 +63,37 @@ void Player::ResetEnergy() {
 bool Player::IsAlive() const {
   return hp_ > 0;
 }
+
+// Getter
+const std::string& Player::GetName() const {
+  return name_;
+}
+
+int Player::GetHp() const {
+  return hp_;
+}
+
+int Player::GetMaxHp() const {
+  return max_hp_;
+}
+
+int Player::GetBlock() const {
+  return block_;
+}
+
+int Player::GetEnergy() const {
+  return energy_;
+}
+
+int Player::GetGold() const {
+  return gold_;
+}
+
+// Deck access
+Deck& Player::GetDeck() {
+  return deck_;
+}
+
+const Deck& Player::GetDeck() const {
+  return deck_;
+}
