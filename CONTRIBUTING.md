@@ -10,10 +10,12 @@
 
 All C++ code follows the [**Google C++ Style Guide**](https://google.github.io/styleguide/cppguide.html). The cpplint GitHub Action will do the cpplint every push.
 
-- **Format** with clang-format. The repository's `.clang-format` selects Google style:
+- **Name files** in lowercase `snake_case`: source files end in `.cc`, headers in `.h`, and tests in `_test.cc` (`main_menu_screen.cc`, `main_menu_screen.h`, `main_menu_screen_test.cc`).
+
+- **Format** with clang-format. The repository's `.clang-format` selects Google style. In VS Code, install the recommended **C/C++** extension (`ms-vscode.cpptools`) when prompted, and every C++ file is formatted on save. From the terminal:
 
   ```
-  clang-format -i $(find src test -name '*.h' -o -name '*.cpp')
+  clang-format -i $(find src test -name '*.h' -o -name '*.cc' -o -name '*.cpp')
   ```
 
 - **Lint** with cpplint before you commit (`brew install cpplint` or `pip install cpplint`):
