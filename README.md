@@ -32,7 +32,8 @@ Your project description should summarize the project you are proposing. Be sure
 
 
 ## User Interface Specification- (Navigation Diagram&Screen Layouts)
-<img width="7331" height="3908" alt="shapes at 26-10-24 16 48 25" src="https://github.com/user-attachments/assets/36d55315-6924-4178-b5f0-2f43197e6931" />
+<img width="7987" height="3908" alt="shapes at 26-10-26 19 09 37" src="https://github.com/user-attachments/assets/4d1c8ee3-f42e-47b9-8e4c-a7034d4b34f2" />
+
 
 Please check online version by following URL ⬇️
 
