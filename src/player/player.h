@@ -31,7 +31,7 @@ class Player {
 
   // Deck access
   Deck& GetDeck();
-  const Deck& GetDeck() const; 
+  const Deck& GetDeck() const;
 
  private:
   std::string name_;

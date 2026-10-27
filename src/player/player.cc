@@ -1,6 +1,7 @@
-#include "Player.h"
+#include "player/player.h"
 
 #include <algorithm>
+#include <string>
 #include <utility>
 
 Player::Player(std::string name, int max_hp)
@@ -55,45 +56,25 @@ bool Player::SpendGold(int amount) {
 }
 
 // Reset energy at the beginning of a turn.
-void Player::ResetEnergy() {
-  energy_ = 3;
-}
+void Player::ResetEnergy() { energy_ = 3; }
 
 // Check whether the player is alive.
-bool Player::IsAlive() const {
-  return hp_ > 0;
-}
+bool Player::IsAlive() const { return hp_ > 0; }
 
 // Getter
-const std::string& Player::GetName() const {
-  return name_;
-}
+const std::string& Player::GetName() const { return name_; }
 
-int Player::GetHp() const {
-  return hp_;
-}
+int Player::GetHp() const { return hp_; }
 
-int Player::GetMaxHp() const {
-  return max_hp_;
-}
+int Player::GetMaxHp() const { return max_hp_; }
 
-int Player::GetBlock() const {
-  return block_;
-}
+int Player::GetBlock() const { return block_; }
 
-int Player::GetEnergy() const {
-  return energy_;
-}
+int Player::GetEnergy() const { return energy_; }
 
-int Player::GetGold() const {
-  return gold_;
-}
+int Player::GetGold() const { return gold_; }
 
 // Deck access
-Deck& Player::GetDeck() {
-  return deck_;
-}
+Deck& Player::GetDeck() { return deck_; }
 
-const Deck& Player::GetDeck() const {
-  return deck_;
-}
+const Deck& Player::GetDeck() const { return deck_; }
