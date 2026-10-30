@@ -46,6 +46,18 @@ Please check online version by following URL ⬇️
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
 
+### Class Diagram Description
+
+The Game class controls the main game process including starting the game, running the game, moving to the next floor, and ending the game. The FloorMap class manages the map and the paths that players can choose. The Level class is an abstract base class, and Combat, Shop, Rest, Event, and Entertainment inherit from it. Each level has different functions. For example, players can fight monsters in Combat, buy cards in Shop, and recover HP in Rest.
+
+The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddBlock(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
+
+The Card class stores information about each card including its name, type, cost, rarity, and effect value. The Deck class manages the player's cards including drawing, shuffling, and discarding cards. The Battle class controls the turn based combat system. It manages player turns, enemy turns, playing cards, and checking whether the battle has ended.
+
+The Enemy class represents the monsters that players fight during the game. Different enemies can have different abilities.
+
+Our class diagram also shows different relationships between classes, including inheritance, composition, and association. These relationships help us connect different parts of the game.
+
 ## Testing
 
 We follow **Test-Driven Development (TDD)** for this project. All test code is located in the `/test` directory.
