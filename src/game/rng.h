@@ -1,8 +1,12 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <random>
+#include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 class Rng {
@@ -36,3 +40,13 @@ class Rng {
  private:
   std::mt19937 engine_;
 };
+
+// Defined here because a template's body must be visible where it is used.
+// Fisher-Yates, drawing from the not-yet-placed part only, built on PickIndex
+// so the order is the same on every platform (std::shuffle is not).
+template <typename T>
+void Rng::Shuffle(std::vector<T>& items) {
+  for (int unplaced = items.size(); unplaced > 1; --unplaced) {
+    std::swap(items[unplaced - 1], items[PickIndex(unplaced)]);
+  }
+}
