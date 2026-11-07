@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 #include "card/Deck.h"
 
 class Player {
  public:
-  Player(std::string name, int max_hp);
+  // max_hp below 1 becomes 1. deck_seed seeds the deck's own shuffle stream.
+  Player(std::string name, int max_hp, uint32_t deck_seed);
 
   // Health and defense
   void TakeDamage(int amount);

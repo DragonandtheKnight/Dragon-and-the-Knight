@@ -1,13 +1,15 @@
 #include "player/player.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 #include <utility>
 
-Player::Player(std::string name, int max_hp)
+Player::Player(std::string name, int max_hp, uint32_t deck_seed)
     : name_(std::move(name)),
       hp_(std::max(1, max_hp)),
-      max_hp_(std::max(1, max_hp)) {}
+      max_hp_(std::max(1, max_hp)),
+      deck_(deck_seed) {}
 
 // Block damage before HP
 void Player::TakeDamage(int amount) {
