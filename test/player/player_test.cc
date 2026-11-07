@@ -1,12 +1,16 @@
 #include "player/player.h"
 
+#include <cstdint>
 #include <string>
 
 #include "gtest/gtest.h"
 
+// These tests don't depend on deck order, so any seed works.
+constexpr uint32_t kDeckSeed = 42;
+
 // Constructor tests
 TEST(PlayerConstructorTest, InitializesPlayerCorrectly) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   EXPECT_EQ(player.GetName(), "Knight");
   EXPECT_EQ(player.GetHp(), 100);
@@ -18,15 +22,23 @@ TEST(PlayerConstructorTest, InitializesPlayerCorrectly) {
 }
 
 TEST(PlayerConstructorTest, InvalidMaxHpBecomesOne) {
-  Player player("Knight", 0);
+  Player player("Knight", 0, kDeckSeed);
 
   EXPECT_EQ(player.GetHp(), 1);
   EXPECT_EQ(player.GetMaxHp(), 1);
 }
 
+TEST(PlayerConstructorTest, NegativeMaxHpBecomesOne) {
+  Player player("Knight", -10, kDeckSeed);
+
+  EXPECT_EQ(player.GetHp(), 1);
+  EXPECT_EQ(player.GetMaxHp(), 1);
+  EXPECT_TRUE(player.IsAlive());
+}
+
 // Damage tests
 TEST(PlayerDamageTest, DamageReducesHp) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.TakeDamage(30);
 
@@ -34,7 +46,7 @@ TEST(PlayerDamageTest, DamageReducesHp) {
 }
 
 TEST(PlayerDamageTest, BlockAbsorbsDamageFirst) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.AddBlock(20);
 
   player.TakeDamage(30);
@@ -44,7 +56,7 @@ TEST(PlayerDamageTest, BlockAbsorbsDamageFirst) {
 }
 
 TEST(PlayerDamageTest, BlockCanAbsorbAllDamage) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.AddBlock(20);
 
   player.TakeDamage(10);
@@ -54,7 +66,7 @@ TEST(PlayerDamageTest, BlockCanAbsorbAllDamage) {
 }
 
 TEST(PlayerDamageTest, HpCannotBeNegative) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.TakeDamage(200);
 
@@ -63,7 +75,7 @@ TEST(PlayerDamageTest, HpCannotBeNegative) {
 }
 
 TEST(PlayerDamageTest, NegativeDamageDoesNothing) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.TakeDamage(-20);
 
@@ -72,7 +84,7 @@ TEST(PlayerDamageTest, NegativeDamageDoesNothing) {
 
 // Healing tests
 TEST(PlayerHealTest, HealingRestoresHp) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(40);
 
   player.Heal(20);
@@ -81,7 +93,7 @@ TEST(PlayerHealTest, HealingRestoresHp) {
 }
 
 TEST(PlayerHealTest, HealingCannotExceedMaxHp) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(20);
 
   player.Heal(50);
@@ -90,7 +102,7 @@ TEST(PlayerHealTest, HealingCannotExceedMaxHp) {
 }
 
 TEST(PlayerHealTest, NegativeHealingDoesNothing) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(20);
 
   player.Heal(-10);
@@ -100,7 +112,7 @@ TEST(PlayerHealTest, NegativeHealingDoesNothing) {
 
 // Block tests
 TEST(PlayerBlockTest, AddBlockIncreasesBlock) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.AddBlock(15);
   player.AddBlock(5);
@@ -109,7 +121,7 @@ TEST(PlayerBlockTest, AddBlockIncreasesBlock) {
 }
 
 TEST(PlayerBlockTest, NegativeBlockIsIgnored) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.AddBlock(-10);
 
@@ -118,7 +130,7 @@ TEST(PlayerBlockTest, NegativeBlockIsIgnored) {
 
 // Gold tests
 TEST(PlayerGoldTest, GainGoldIncreasesGold) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.GainGold(50);
 
@@ -126,7 +138,7 @@ TEST(PlayerGoldTest, GainGoldIncreasesGold) {
 }
 
 TEST(PlayerGoldTest, SpendGoldSucceedsWithEnoughGold) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.GainGold(50);
 
   EXPECT_TRUE(player.SpendGold(20));
@@ -134,7 +146,7 @@ TEST(PlayerGoldTest, SpendGoldSucceedsWithEnoughGold) {
 }
 
 TEST(PlayerGoldTest, SpendGoldFailsWithoutEnoughGold) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.GainGold(10);
 
   EXPECT_FALSE(player.SpendGold(20));
@@ -142,7 +154,7 @@ TEST(PlayerGoldTest, SpendGoldFailsWithoutEnoughGold) {
 }
 
 TEST(PlayerGoldTest, NegativeGoldOperationsAreIgnored) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.GainGold(-10);
 
@@ -153,7 +165,7 @@ TEST(PlayerGoldTest, NegativeGoldOperationsAreIgnored) {
 
 // Energy tests
 TEST(PlayerEnergyTest, ResetEnergySetsEnergyToThree) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.ResetEnergy();
 
@@ -162,7 +174,7 @@ TEST(PlayerEnergyTest, ResetEnergySetsEnergyToThree) {
 
 // Alive status tests
 TEST(PlayerAliveTest, PlayerDiesAtZeroHp) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
 
   player.TakeDamage(100);
 
@@ -170,7 +182,7 @@ TEST(PlayerAliveTest, PlayerDiesAtZeroHp) {
 }
 
 TEST(PlayerAliveTest, PlayerCanHealAfterReachingZeroHp) {
-  Player player("Knight", 100);
+  Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(100);
 
   player.Heal(10);
