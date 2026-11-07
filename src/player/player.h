@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include "card/Deck.h"
+#include "card/deck.h"
 
 class Player {
  public:

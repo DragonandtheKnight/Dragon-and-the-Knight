@@ -10,12 +10,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(dragon_knight_game STATIC)
 target_sources(dragon_knight_game
     PRIVATE
+        src/card/deck.cc
         src/game/rng.cc
         src/player/player.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
     FILES
+        src/card/deck.h
         src/game/rng.h
         src/player/player.h
 )
