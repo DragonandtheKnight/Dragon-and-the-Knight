@@ -25,7 +25,7 @@ Enemy_skill Goblin::calMove() {
         return Enemy_skill::Goblin_dash_attack_lv3;
       }
       if (r <= 30)
-        return Enemy_skill::Goblin_hit_lv3;  // 70%概率使用技能1
+        return Enemy_skill::Goblin_hit_lv3;  // 30%概率使用技能1
       else if (r <= 70)
         return Enemy_skill::Goblin_hard_slam_lv3;
       else {
