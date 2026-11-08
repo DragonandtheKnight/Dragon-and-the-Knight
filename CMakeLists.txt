@@ -11,6 +11,21 @@ set(FTXUI_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
 set(FTXUI_QUIET ON CACHE BOOL "" FORCE)
 add_subdirectory(lib/ftxui EXCLUDE_FROM_ALL)
 
+add_library(dragon_knight_game STATIC)
+target_sources(dragon_knight_game
+    PRIVATE
+        src/card/deck.cc
+        src/game/rng.cc
+        src/player/player.cc
+    PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS src
+    FILES
+        src/card/deck.h
+        src/game/rng.h
+        src/player/player.h
+)
+
 # The UI is header-only until its screens are implemented. Verifying the header
 # set compiles every header on its own, so a broken declaration fails the build.
 add_library(dragon_knight_ui INTERFACE)
@@ -49,6 +64,15 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 add_subdirectory(lib/googletest EXCLUDE_FROM_ALL)
 include(GoogleTest)
 
+add_executable(dragon_knight_game_tests
+    test/game/rng_test.cc
+    test/player/player_test.cc
+)
+target_link_libraries(dragon_knight_game_tests PRIVATE
+    dragon_knight_game
+    GTest::gtest_main
+)
+
 add_executable(dragon_knight_tests
     test/ui/main_menu_screen_test.cc
 )
@@ -56,6 +80,8 @@ target_link_libraries(dragon_knight_tests PRIVATE
     dragon_knight_ui
     GTest::gtest_main
 )
+
 # PRE_TEST lists the tests when ctest runs, so a test binary that crashes on
 # start fails the test run instead of the build.
+gtest_discover_tests(dragon_knight_game_tests DISCOVERY_MODE PRE_TEST)
 gtest_discover_tests(dragon_knight_tests DISCOVERY_MODE PRE_TEST)
