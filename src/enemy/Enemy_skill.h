@@ -1,6 +1,8 @@
 #pragma once
 
 enum class Enemy_skill {
+  Already_dead,
+
   Slime_slap_lv1,
 
   // gobln
