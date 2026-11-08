@@ -186,3 +186,52 @@ TEST(EnemyTest, CalMoveIsDispatchedThroughTheBaseType) {
 
   EXPECT_EQ(base.calMove(), Enemy_skill::Slime_slap_lv1);
 }
+
+TEST(EnemyTest, HealRestoresLostHp) {
+  StubEnemy enemy(Enemy_type::Slime, 30, 1, 1, 7);
+  enemy.deal_dmg(10);
+
+  enemy.heal(4);
+
+  EXPECT_EQ(enemy.get_hp(), 24);
+}
+
+TEST(EnemyTest, HealCapsAtMaxHp) {
+  StubEnemy enemy(Enemy_type::Slime, 30, 1, 1, 7);
+  enemy.deal_dmg(10);
+
+  enemy.heal(100);
+
+  EXPECT_EQ(enemy.get_hp(), 30);
+}
+
+TEST(EnemyTest, HealAtFullHealthDoesNotOverflow) {
+  StubEnemy enemy(Enemy_type::Slime, 30, 1, 1, 7);
+
+  enemy.heal(10);
+
+  EXPECT_EQ(enemy.get_hp(), 30);
+}
+
+// A dead monster stays dead: healing must not bring it back.
+TEST(EnemyTest, ADefeatedEnemyCannotBeHealed) {
+  StubEnemy enemy(Enemy_type::Slime, 30, 1, 1, 7);
+  enemy.deal_dmg(30);
+
+  enemy.heal(10);
+
+  EXPECT_EQ(enemy.get_hp(), 0);
+  EXPECT_FALSE(enemy.is_alive());
+}
+
+// Healing is a hp thing only; the shield of the round is untouched.
+TEST(EnemyTest, HealDoesNotTouchShield) {
+  StubEnemy enemy(Enemy_type::Slime, 30, 1, 1, 7);
+  enemy.deal_dmg(10);
+  enemy.add_shield(5);
+
+  enemy.heal(3);
+
+  EXPECT_EQ(enemy.get_hp(), 23);
+  EXPECT_EQ(enemy.get_shield(), 5);
+}
