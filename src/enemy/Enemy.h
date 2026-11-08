@@ -26,11 +26,13 @@ class Enemy {
   virtual ~Enemy() = default;
 
   Enemy_type get_name();
-  void set_hp(int hp);
+  void deal_dmg(int dmg);
   int get_hp();
   int get_difficulty();
   int get_level();
-  void set_shield(int shield);
+  void add_shield(int shield);
+  void clear_shield();
   int get_shield();
+  bool is_alive();
   virtual Enemy_skill calMove() = 0;
 };

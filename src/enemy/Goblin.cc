@@ -7,6 +7,9 @@ Goblin::Goblin(int level, std::uint32_t seed)
 }
 
 Enemy_skill Goblin::calMove() {
+  if (!is_alive()) {
+    return Enemy_skill::Already_dead;
+  }
   int r = rng_.UniformInt(1, 100);
   switch (get_level()) {
     case 1:

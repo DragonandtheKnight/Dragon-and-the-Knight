@@ -219,3 +219,31 @@ TEST(GoblinTest, LevelThreeRollsAreAboutThirtyFortyThirty) {
   EXPECT_NEAR(CountOf(rolls, Enemy_skill::Goblin_dash_lv3), total * 30 / 100,
               kTolerance);
 }
+
+TEST(GoblinTest, ADefeatedGoblinReturnsAlreadyDead) {
+  Goblin goblin(2, kSeed);
+  goblin.deal_dmg(40);  // Level 2 has exactly 40 hp.
+
+  ASSERT_FALSE(goblin.is_alive());
+  EXPECT_EQ(goblin.calMove(), Enemy_skill::Already_dead);
+}
+
+// The battle code may still ask a corpse for a move once; it must keep saying
+// "already dead" instead of rolling again.
+TEST(GoblinTest, ADefeatedGoblinKeepsReturningAlreadyDead) {
+  Goblin goblin(3, kSeed);
+  goblin.deal_dmg(500);
+
+  for (int i = 0; i < 10; ++i) {
+    EXPECT_EQ(goblin.calMove(), Enemy_skill::Already_dead);
+  }
+}
+
+TEST(GoblinTest, ALivingGoblinNeverReturnsAlreadyDead) {
+  for (int level = 1; level <= 3; ++level) {
+    Goblin goblin(level, kSeed);
+    const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+
+    EXPECT_EQ(CountOf(moves, Enemy_skill::Already_dead), 0) << "level " << level;
+  }
+}
