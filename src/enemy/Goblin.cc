@@ -1,8 +1,8 @@
 #include "enemy/Goblin.h"
 
 Goblin::Goblin(int level, std::uint32_t seed)
-    : Enemy(goblin_type_level(level), goblin_max_hp_level(level),
-            goblin_dfficulty_level(level), level, seed) {
+    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
+            level, seed) {
   goblin_was_last_move_dash_ = false;
 }
 
@@ -42,7 +42,7 @@ Enemy_skill Goblin::calMove() {
   }
 }
 
-Enemy_type Goblin::goblin_type_level(int level) {
+Enemy_type Goblin::type_level(int level) {
   Enemy_type type;
   switch (level) {
     case 1:
@@ -61,7 +61,7 @@ Enemy_type Goblin::goblin_type_level(int level) {
   return type;
 }
 
-int Goblin::goblin_max_hp_level(int level) {
+int Goblin::max_hp_level(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -80,7 +80,7 @@ int Goblin::goblin_max_hp_level(int level) {
   return temp;
 }
 
-int Goblin::goblin_dfficulty_level(int level) {
+int Goblin::dfficulty_level(int level) {
   int temp;
   switch (level) {
     case 1:

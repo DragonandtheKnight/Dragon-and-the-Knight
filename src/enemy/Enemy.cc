@@ -38,6 +38,8 @@ void Enemy::deal_dmg(int dmg) {
 
 int Enemy::get_hp() { return hp_; }
 
+int Enemy::get_max_hp() { return max_hp_; }
+
 void Enemy::heal(int heal) {
   int temp;
   temp = heal + hp_;

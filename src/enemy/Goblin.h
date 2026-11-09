@@ -7,9 +7,9 @@
 
 class Goblin : public Enemy {
  private:
-  Enemy_type goblin_type_level(int level);
-  int goblin_max_hp_level(int level);
-  int goblin_dfficulty_level(int level);
+  Enemy_type type_level(int level);
+  int max_hp_level(int level);
+  int dfficulty_level(int level);
   bool goblin_was_last_move_dash_;
 
  public:

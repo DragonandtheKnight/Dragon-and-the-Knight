@@ -235,3 +235,21 @@ TEST(EnemyTest, HealDoesNotTouchShield) {
   EXPECT_EQ(enemy.get_hp(), 23);
   EXPECT_EQ(enemy.get_shield(), 5);
 }
+
+TEST(EnemyTest, GetMaxHpIsTheHpItStartedWith) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+
+  EXPECT_EQ(enemy.get_max_hp(), 30);
+  EXPECT_EQ(enemy.get_hp(), 30);
+}
+
+// Damage lowers hp but never the ceiling: the ceiling is what healing clamps
+// to, so it has to survive every hit.
+TEST(EnemyTest, DamageDoesNotLowerMaxHp) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+
+  enemy.deal_dmg(20);
+
+  EXPECT_EQ(enemy.get_hp(), 10);
+  EXPECT_EQ(enemy.get_max_hp(), 30);
+}
