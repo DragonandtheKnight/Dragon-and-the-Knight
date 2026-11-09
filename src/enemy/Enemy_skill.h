@@ -31,5 +31,16 @@ enum class Enemy_skill {
   Shaman_give_shield_lv3,
   Shaman_heal_self_lv3,
 
+  // giant
+  Giant_slam_lv1,
+  Giant_defend_lv1,
+  Giant_slam_lv2,
+  Giant_defend_lv2,
+  Giant_charge_lv2,
+  Giant_slam_lv3,
+  Giant_defend_lv3,
+  Giant_super_charge_lv3,
+  Giant_super_charge_hit_lv3,
+
   Dragon_claw_lv1
 };
