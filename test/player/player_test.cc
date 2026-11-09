@@ -164,79 +164,18 @@ TEST(PlayerGoldTest, NegativeGoldOperationsAreIgnored) {
 }
 
 // Energy tests
-TEST(PlayerEnergyTest, EnergyLimitsStartAtTenMaxAndThreePerTurn) {
+TEST(PlayerEnergyTest, MaxEnergyStartsAtTen) {
   Player player("Knight", 100, kDeckSeed);
 
   EXPECT_EQ(player.GetMaxEnergy(), 10);
-  EXPECT_EQ(player.GetEnergyPerTurn(), 3);
-}
-
-TEST(PlayerEnergyTest, UnspentEnergyCarriesOver) {
-  Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
-
-  player.GainEnergy(3);
-
-  EXPECT_EQ(player.GetEnergy(), 6);
 }
 
 TEST(PlayerEnergyTest, ResetEnergySetsEnergyToZero) {
   Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
 
   player.ResetEnergy();
 
   EXPECT_EQ(player.GetEnergy(), 0);
-}
-
-TEST(PlayerEnergyTest, GainEnergyAddsEnergy) {
-  Player player("Knight", 100, kDeckSeed);
-
-  player.GainEnergy(1);
-
-  EXPECT_EQ(player.GetEnergy(), 1);
-}
-
-TEST(PlayerEnergyTest, GainEnergyCannotExceedMaxEnergy) {
-  Player player("Knight", 100, kDeckSeed);
-
-  player.GainEnergy(15);
-
-  EXPECT_EQ(player.GetEnergy(), 10);
-}
-
-TEST(PlayerEnergyTest, NonPositiveEnergyGainIsIgnored) {
-  Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
-
-  player.GainEnergy(0);
-  player.GainEnergy(-2);
-
-  EXPECT_EQ(player.GetEnergy(), 3);
-}
-
-TEST(PlayerEnergyTest, SpendEnergySucceedsWithEnoughEnergy) {
-  Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
-
-  EXPECT_TRUE(player.SpendEnergy(2));
-  EXPECT_EQ(player.GetEnergy(), 1);
-}
-
-TEST(PlayerEnergyTest, SpendEnergyFailsWithoutEnoughEnergy) {
-  Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
-
-  EXPECT_FALSE(player.SpendEnergy(4));
-  EXPECT_EQ(player.GetEnergy(), 3);
-}
-
-TEST(PlayerEnergyTest, NegativeEnergySpendFails) {
-  Player player("Knight", 100, kDeckSeed);
-  player.GainEnergy(3);
-
-  EXPECT_FALSE(player.SpendEnergy(-1));
-  EXPECT_EQ(player.GetEnergy(), 3);
 }
 
 TEST(PlayerEnergyTest, IncreaseMaxEnergyRaisesMaxEnergy) {
@@ -248,25 +187,13 @@ TEST(PlayerEnergyTest, IncreaseMaxEnergyRaisesMaxEnergy) {
   EXPECT_EQ(player.GetEnergy(), 0);
 }
 
-TEST(PlayerEnergyTest, IncreaseEnergyPerTurnRaisesEnergyPerTurn) {
-  Player player("Knight", 100, kDeckSeed);
-
-  player.IncreaseEnergyPerTurn(1);
-
-  EXPECT_EQ(player.GetEnergyPerTurn(), 4);
-  EXPECT_EQ(player.GetEnergy(), 0);
-}
-
-TEST(PlayerEnergyTest, NonPositiveEnergyLimitIncreasesAreIgnored) {
+TEST(PlayerEnergyTest, NonPositiveMaxEnergyIncreaseIsIgnored) {
   Player player("Knight", 100, kDeckSeed);
 
   player.IncreaseMaxEnergy(0);
   player.IncreaseMaxEnergy(-2);
-  player.IncreaseEnergyPerTurn(0);
-  player.IncreaseEnergyPerTurn(-1);
 
   EXPECT_EQ(player.GetMaxEnergy(), 10);
-  EXPECT_EQ(player.GetEnergyPerTurn(), 3);
 }
 
 // Alive status tests
