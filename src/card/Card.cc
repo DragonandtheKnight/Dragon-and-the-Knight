@@ -1,5 +1,6 @@
 #include "card/Card.h"
 
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <string>
