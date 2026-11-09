@@ -52,9 +52,9 @@ TEST(EnemyTest, StartsAlive) {
 }
 
 TEST(EnemyTest, ConstructorStoresTypeDifficultyAndLevel) {
-  StubEnemy enemy(Enemy_type::Bat, 25, 2, 2, 7);
+  StubEnemy enemy(Enemy_type::Goblin, 25, 2, 2, 7);
 
-  EXPECT_EQ(enemy.get_name(), Enemy_type::Bat);
+  EXPECT_EQ(enemy.get_name(), Enemy_type::Goblin);
   EXPECT_EQ(enemy.get_difficulty(), 2);
   EXPECT_EQ(enemy.get_level(), 2);
 }

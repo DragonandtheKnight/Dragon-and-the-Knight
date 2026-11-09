@@ -4,6 +4,11 @@ enum class Enemy_skill {
   Already_dead,
 
   Slime_slap_lv1,
+  Slime_heal_lv1,
+  Slime_slap_lv2,
+  Slime_heal_lv2,
+  Slime_slap_lv3,
+  Slime_heal_lv3,
 
   // gobln
   Goblin_hit_lv1,
