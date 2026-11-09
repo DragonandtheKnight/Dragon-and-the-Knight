@@ -14,6 +14,7 @@ target_sources(dragon_knight_game
         src/enemy/Goblin.cc
         src/enemy/Slime.cc
         src/game/rng.cc
+        src/enemy/Shaman.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
@@ -24,6 +25,7 @@ target_sources(dragon_knight_game
         src/enemy/Enemy_type.h
         src/enemy/Goblin.h
         src/enemy/Slime.h
+        src/enemy/Shaman.h
 )
 
 enable_testing()
@@ -38,6 +40,7 @@ add_executable(dragon_knight_game_tests
     test/enemy/enemy_test.cc
     test/enemy/goblin_test.cc
     test/enemy/slime_test.cc
+    test/enemy/shaman_test.cc
 )
 target_link_libraries(dragon_knight_game_tests PRIVATE
     dragon_knight_game
