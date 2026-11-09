@@ -1,3 +1,3 @@
 #pragma once
 
-enum class CardType { Attack, Defense, Heal, Special };
+enum class CardType { kAttack, kDefense, kHeal, kSpecial };
