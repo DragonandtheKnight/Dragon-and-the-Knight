@@ -90,16 +90,16 @@ int Giant::dfficulty_level(int level) {
   int temp;
   switch (level) {
     case 1:
-      temp = 1;
-      break;
-    case 2:
       temp = 2;
       break;
-    case 3:
+    case 2:
       temp = 3;
       break;
+    case 3:
+      temp = 4;
+      break;
     default:
-      temp = 1;
+      temp = 2;
       break;
   }
   return temp;
