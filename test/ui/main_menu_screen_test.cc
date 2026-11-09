@@ -11,33 +11,7 @@
 #include "ftxui/dom/node.hpp"
 #include "ftxui/screen/screen.hpp"
 #include "gtest/gtest.h"
-
-constexpr int kScreenWidth = 80;
-constexpr int kScreenHeight = 24;
-
-struct CellPosition {
-  int x;
-  int y;
-};
-
-// Searches cell by cell because Screen::ToString() mixes style escape codes
-// into the text. Supports ASCII text only, where each character fills one cell.
-static std::optional<CellPosition> FindText(const ftxui::Screen& screen,
-                                            const std::string& text) {
-  const int length = static_cast<int>(text.size());
-  for (int y = 0; y < screen.dimy(); ++y) {
-    for (int x = 0; x + length <= screen.dimx(); ++x) {
-      bool matches = true;
-      for (int i = 0; i < length && matches; ++i) {
-        matches = screen.CellAt(x + i, y).character == std::string(1, text[i]);
-      }
-      if (matches) {
-        return CellPosition{x, y};
-      }
-    }
-  }
-  return std::nullopt;
-}
+#include "ui/screen_text.h"
 
 struct MenuEntry {
   const char* label;
@@ -153,4 +127,19 @@ TEST(MainMenuScreenWithoutActionsTest, ChoosingAnEntryDoesNotThrow) {
   ftxui::Render(screen, menu->Render());
 
   EXPECT_NO_THROW(menu->OnEvent(ftxui::Event::Return));
+}
+
+TEST_F(MainMenuScreenTest, LetterKeysChooseNothing) {
+  Press(ftxui::Event::Character('n'));
+  Press(ftxui::Event::Character('q'));
+  Press(ftxui::Event::Escape);
+
+  EXPECT_TRUE(chosen_.empty());
+}
+
+TEST_F(MainMenuScreenTest, EachEnterChoosesOnce) {
+  Press(ftxui::Event::Return);
+  Press(ftxui::Event::Return);
+
+  EXPECT_EQ(chosen_, (std::vector<std::string>{"new game", "new game"}));
 }

@@ -15,6 +15,7 @@ add_library(dragon_knight_game STATIC)
 target_sources(dragon_knight_game
     PRIVATE
         src/card/deck.cc
+        src/game/game_state_machine.cc
         src/game/rng.cc
         src/player/player.cc
     PUBLIC
@@ -22,18 +23,26 @@ target_sources(dragon_knight_game
     BASE_DIRS src
     FILES
         src/card/deck.h
+        src/game/difficulty.h
+        src/game/game_state_machine.h
         src/game/rng.h
         src/player/player.h
 )
 
-# The UI is header-only until its screens are implemented. Verifying the header
-# set compiles every header on its own, so a broken declaration fails the build.
-add_library(dragon_knight_ui INTERFACE)
-target_sources(dragon_knight_ui INTERFACE
+# Screens whose headers are listed but whose .cc is not yet here wait for game
+# classes (Card, FloorMap, Battle, Shop). Verifying the header set still
+# compiles every header on its own, so a broken declaration fails the build.
+add_library(dragon_knight_ui STATIC)
+target_sources(dragon_knight_ui
+    PRIVATE
+        src/ui/game_over_screen.cc
+        src/ui/main_menu_screen.cc
+        src/ui/settings_screen.cc
+        src/ui/widgets.cc
+    PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
     FILES
-        src/game/difficulty.h
         src/ui/app.h
         src/ui/battle_screen.h
         src/ui/exchange_card_screen.h
@@ -46,7 +55,8 @@ target_sources(dragon_knight_ui INTERFACE
         src/ui/shop_screen.h
         src/ui/widgets.h
 )
-target_link_libraries(dragon_knight_ui INTERFACE
+target_link_libraries(dragon_knight_ui PUBLIC
+    dragon_knight_game
     ftxui::component
     ftxui::dom
     ftxui::screen
@@ -65,6 +75,7 @@ add_subdirectory(lib/googletest EXCLUDE_FROM_ALL)
 include(GoogleTest)
 
 add_executable(dragon_knight_game_tests
+    test/game/game_state_machine_test.cc
     test/game/rng_test.cc
     test/player/player_test.cc
 )
@@ -74,8 +85,12 @@ target_link_libraries(dragon_knight_game_tests PRIVATE
 )
 
 add_executable(dragon_knight_tests
+    test/ui/game_over_screen_test.cc
     test/ui/main_menu_screen_test.cc
+    test/ui/settings_screen_test.cc
+    test/ui/widgets_test.cc
 )
+target_include_directories(dragon_knight_tests PRIVATE test)
 target_link_libraries(dragon_knight_tests PRIVATE
     dragon_knight_ui
     GTest::gtest_main
