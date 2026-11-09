@@ -28,6 +28,7 @@ class Enemy {
   Enemy_type get_name();
   void deal_dmg(int dmg);
   int get_hp();
+  void heal(int heal);
   int get_difficulty();
   int get_level();
   void add_shield(int shield);
