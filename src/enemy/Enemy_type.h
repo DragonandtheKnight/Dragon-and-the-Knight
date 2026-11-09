@@ -1,7 +1,6 @@
 #pragma once
 
 enum class Enemy_type {
-
   Giant_baby,
   Giant,
   Giant_king,

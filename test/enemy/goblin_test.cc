@@ -244,6 +244,6 @@ TEST(GoblinTest, ALivingGoblinNeverReturnsAlreadyDead) {
     Goblin goblin(level, kSeed);
     const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
 
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Already_dead), 0) << "level " << level;
+    EXPECT_EQ(CountOf(moves, Enemy_skill::Already_dead), 0) << level;
   }
 }

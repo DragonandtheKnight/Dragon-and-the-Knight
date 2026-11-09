@@ -16,9 +16,9 @@ Enemy_skill Goblin::calMove() {
       return Enemy_skill::Goblin_hit_lv1;
       break;
     case 2:
-      if (r <= 70)
+      if (r <= 70) {
         return Enemy_skill::Goblin_hit_lv2;  // 70%概率使用技能1
-      else
+      } else
         return Enemy_skill::Goblin_hard_slam_lv2;
       break;
     case 3:
@@ -27,11 +27,11 @@ Enemy_skill Goblin::calMove() {
         goblin_was_last_move_dash_ = false;
         return Enemy_skill::Goblin_dash_attack_lv3;
       }
-      if (r <= 30)
+      if (r <= 30) {
         return Enemy_skill::Goblin_hit_lv3;  // 30%概率使用技能1
-      else if (r <= 70)
+      } else if (r <= 70) {
         return Enemy_skill::Goblin_hard_slam_lv3;
-      else {
+      } else {
         goblin_was_last_move_dash_ = true;
         return Enemy_skill::Goblin_dash_lv3;
       }

@@ -105,8 +105,8 @@ TEST(DragonTest, DragonBelowHalfHealthNeverFlies) {
     HurtTo(dragon, 2, 5);
     const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
 
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv2), 0) << "level " << level;
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv3), 0) << "level " << level;
+    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv2), 0) << level;
+    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv3), 0) << level;
   }
 }
 
@@ -149,7 +149,7 @@ TEST(DragonTest, SlamsOnlyHappenAfterAFlight) {
           moves[i - 1] == (level == 2 ? Enemy_skill::Dragon_fly_lv2
                                       : Enemy_skill::Dragon_fly_lv3);
       EXPECT_TRUE(came_from_flight)
-          << "level " << level << ", slam at index " << i << " came from nowhere";
+          << level << " slammed without flying at " << i;
     }
   }
 }
