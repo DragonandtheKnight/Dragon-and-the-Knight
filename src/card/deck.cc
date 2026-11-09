@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <utility>
+#include <vector>
 
 Deck::Deck(uint32_t seed) : rng_(seed) {}
 
@@ -15,7 +16,6 @@ const std::vector<Card>& Deck::GetCards() const {
 }
 
 bool Deck::RemoveCard(int index) {
-
     // Step 1: Check invalid index
     if (index < 0 || static_cast<std::size_t>(index) >= cards_.size()) {
         return false;
@@ -45,7 +45,6 @@ void Deck::Shuffle() {
 
 void Deck::Draw(int count) {
     for (int i = 0; i < count; ++i) {
-
         // If the draw pile is empty, recycle discarded cards
         if (draw_pile_.empty()) {
             ReshuffleDiscardPile();
@@ -56,7 +55,7 @@ void Deck::Draw(int count) {
             break;
         }
 
-        // Draw the last card 
+        // Draw the last card
         hand_.push_back(draw_pile_.back());
         draw_pile_.pop_back();
     }
