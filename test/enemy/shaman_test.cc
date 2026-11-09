@@ -36,10 +36,10 @@ std::set<Enemy_skill> SkillsOf(int level) {
     case 1:
       return {Enemy_skill::Shaman_curse_lv1, Enemy_skill::Shaman_heal_all_lv1};
     case 2:
-      return {Enemy_skill::Shaman_cures_lv2, Enemy_skill::Shaman_heal_all_lv2,
+      return {Enemy_skill::Shaman_curse_lv2, Enemy_skill::Shaman_heal_all_lv2,
               Enemy_skill::Shaman_give_shield_lv2};
     default:
-      return {Enemy_skill::Shaman_cures_lv3, Enemy_skill::Shaman_heal_all_lv3,
+      return {Enemy_skill::Shaman_curse_lv3, Enemy_skill::Shaman_heal_all_lv3,
               Enemy_skill::Shaman_give_shield_lv3,
               Enemy_skill::Shaman_heal_self_lv3};
   }

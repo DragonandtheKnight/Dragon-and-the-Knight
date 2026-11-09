@@ -23,10 +23,10 @@ enum class Enemy_skill {
   // shaman
   Shaman_curse_lv1,
   Shaman_heal_all_lv1,
-  Shaman_cures_lv2,
+  Shaman_curse_lv2,
   Shaman_heal_all_lv2,
   Shaman_give_shield_lv2,
-  Shaman_cures_lv3,
+  Shaman_curse_lv3,
   Shaman_heal_all_lv3,
   Shaman_give_shield_lv3,
   Shaman_heal_self_lv3,
