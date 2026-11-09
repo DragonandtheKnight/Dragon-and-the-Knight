@@ -18,8 +18,9 @@ Enemy_skill Goblin::calMove() {
     case 2:
       if (r <= 70) {
         return Enemy_skill::Goblin_hit_lv2;  // 70%概率使用技能1
-      } else
+      } else {
         return Enemy_skill::Goblin_hard_slam_lv2;
+      }
       break;
     case 3:
       if (goblin_was_last_move_dash_ ==
