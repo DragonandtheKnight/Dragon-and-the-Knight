@@ -40,8 +40,10 @@ class Card {
 
   // Takes ownership; throws std::invalid_argument for a null effect.
   void addEffect(std::unique_ptr<CardEffect> effect);
-  // Executes attached effects in insertion order. Type/value remain metadata; they do not create implicit effects or spend AP.
+  // Executes attached effects in insertion order. Type/value remain metadata;
+  // they do not create implicit effects or spend AP.
   void applyEffect(EffectContext& context) const;
-  // Compatibility overload: supplies only player and target. Effects requiring the enemy collection or deck must use the context overload instead.
+  // Compatibility overload: supplies only player and target. Effects requiring
+  // the enemy collection or deck must use the context overload instead.
   void applyEffect(Player& player, Enemy& enemy) const;
 };

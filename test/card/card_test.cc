@@ -1,11 +1,11 @@
-#include "card/Card.h"
-
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "card/Card.h"
 #include "card/CardRarity.h"
 #include "card/CardType.h"
 #include "card/card_effect.h"
