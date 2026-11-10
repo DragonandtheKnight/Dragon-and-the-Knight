@@ -1,3 +1,6 @@
 [submodule "lib/googletest"]
 	path = lib/googletest
 	url = https://github.com/google/googletest.git
+[submodule "lib/ftxui"]
+	path = lib/ftxui
+	url = https://github.com/ArthurSonzogni/FTXUI.git
