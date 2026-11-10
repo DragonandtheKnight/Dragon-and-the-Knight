@@ -42,6 +42,14 @@ add_library(card
 )
 target_include_directories(card PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+add_library(deck src/card/deck.cc src/card/deck.h)
+target_link_libraries(deck PUBLIC card dragon_knight_game)
+
+# Game/Player are unfinished. Keep their executable separate so Card tests can
+# build independently; explicitly building this target exposes integration gaps.
+add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL src/main.cpp)
+target_link_libraries(dragon_and_the_knight PRIVATE deck)
+
 enable_testing()
 
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
@@ -69,3 +77,7 @@ gtest_discover_tests(dragon_knight_game_tests DISCOVERY_MODE PRE_TEST)
 add_executable(card_tests test/card/card_test.cc)
 target_link_libraries(card_tests PRIVATE card GTest::gtest_main)
 gtest_discover_tests(card_tests TEST_PREFIX "card." DISCOVERY_MODE PRE_TEST)
+
+add_executable(deck_tests test/card/deck_test.cc)
+target_link_libraries(deck_tests PRIVATE deck GTest::gtest_main)
+gtest_discover_tests(deck_tests TEST_PREFIX "deck." DISCOVERY_MODE PRE_TEST)
