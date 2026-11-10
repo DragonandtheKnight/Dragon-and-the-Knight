@@ -1,40 +1,41 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
-#include "enemy/Enemy_skill.h"
-#include "enemy/Enemy_type.h"
+#include "enemy/enemy_skill.h"
+#include "enemy/enemy_type.h"
 #include "game/rng.h"
 
 class Enemy {
+ public:
+  Enemy(EnemyType name, int max_hp, int difficulty, int level,
+        std::uint32_t seed);
+  virtual ~Enemy() = default;
+
+  EnemyType GetName() const;
+  void TakeDamage(int dmg);
+  int GetHp() const;
+  int GetMaxHp() const;
+  void Heal(int heal);
+  int GetDifficulty() const;
+  int GetLevel() const;
+  void AddShield(int shield);
+  void ClearShield();
+  int GetShield() const;
+  bool IsAlive() const;
+  virtual EnemySkill CalculateMove() = 0;
+
+ protected:
+  Rng rng_;
+  std::vector<EnemySkill> skills_;
+
  private:
-  Enemy_type name_;
+  EnemyType name_;
   int hp_;
   int max_hp_;
   int difficulty_;
   int shield_;
   int level_;
   bool is_alive_;
-
- protected:
-  Rng rng_;
-  std::vector<Enemy_skill> skills_;
-
- public:
-  Enemy(Enemy_type name, int maxHp, int difficulty, int level,
-        std::uint32_t seed);
-  virtual ~Enemy() = default;
-
-  Enemy_type get_name() const;
-  void deal_dmg(int dmg);
-  int get_hp() const;
-  int get_max_hp() const;
-  void heal(int heal);
-  int get_difficulty() const;
-  int get_level() const;
-  void add_shield(int shield);
-  void clear_shield();
-  int get_shield() const;
-  bool is_alive() const;
-  virtual Enemy_skill calMove() = 0;
 };

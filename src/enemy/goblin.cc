@@ -1,68 +1,70 @@
-#include "enemy/Goblin.h"
+#include "enemy/goblin.h"
+
+#include <cstdint>
 
 Goblin::Goblin(int level, std::uint32_t seed)
-    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
-            level, seed) {
+    : Enemy(TypeForLevel(level), MaxHpForLevel(level),
+            DifficultyForLevel(level), level, seed) {
   goblin_was_last_move_dash_ = false;
 }
 
-Enemy_skill Goblin::calMove() {
-  if (!is_alive()) {
-    return Enemy_skill::Already_dead;
+EnemySkill Goblin::CalculateMove() {
+  if (!IsAlive()) {
+    return EnemySkill::kAlreadyDead;
   }
   int r = rng_.UniformInt(1, 100);
-  switch (get_level()) {
+  switch (GetLevel()) {
     case 1:
-      return Enemy_skill::Goblin_hit_lv1;
+      return EnemySkill::kGoblinHitLv1;
       break;
     case 2:
       if (r <= 70) {
-        return Enemy_skill::Goblin_hit_lv2;  // 70%概率使用技能1
+        return EnemySkill::kGoblinHitLv2;  // 70%概率使用技能1
       } else {
-        return Enemy_skill::Goblin_hard_slam_lv2;
+        return EnemySkill::kGoblinHardSlamLv2;
       }
       break;
     case 3:
       if (goblin_was_last_move_dash_ ==
           true) {  // 如果上一步是闪避，那么下一步闪避反击
         goblin_was_last_move_dash_ = false;
-        return Enemy_skill::Goblin_dash_attack_lv3;
+        return EnemySkill::kGoblinDashAttackLv3;
       }
       if (r <= 30) {
-        return Enemy_skill::Goblin_hit_lv3;  // 30%概率使用技能1
+        return EnemySkill::kGoblinHitLv3;  // 30%概率使用技能1
       } else if (r <= 70) {
-        return Enemy_skill::Goblin_hard_slam_lv3;
+        return EnemySkill::kGoblinHardSlamLv3;
       } else {
         goblin_was_last_move_dash_ = true;
-        return Enemy_skill::Goblin_dash_lv3;
+        return EnemySkill::kGoblinDashLv3;
       }
       break;
     default:
-      return Enemy_skill::Goblin_hit_lv1;
+      return EnemySkill::kGoblinHitLv1;
       break;
   }
 }
 
-Enemy_type Goblin::type_level(int level) {
-  Enemy_type type;
+EnemyType Goblin::TypeForLevel(int level) {
+  EnemyType type;
   switch (level) {
     case 1:
-      type = Enemy_type::Goblin;
+      type = EnemyType::kGoblin;
       break;
     case 2:
-      type = Enemy_type::Goblin_captain;
+      type = EnemyType::kGoblinCaptain;
       break;
     case 3:
-      type = Enemy_type::Goblin_king;
+      type = EnemyType::kGoblinKing;
       break;
     default:
-      type = Enemy_type::Goblin;
+      type = EnemyType::kGoblin;
       break;
   }
   return type;
 }
 
-int Goblin::max_hp_level(int level) {
+int Goblin::MaxHpForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -81,7 +83,7 @@ int Goblin::max_hp_level(int level) {
   return temp;
 }
 
-int Goblin::dfficulty_level(int level) {
+int Goblin::DifficultyForLevel(int level) {
   int temp;
   switch (level) {
     case 1:

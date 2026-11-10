@@ -1,23 +1,23 @@
 #pragma once
 
-enum class Enemy_type {
-  Giant_baby,
-  Giant,
-  Giant_king,
+enum class EnemyType {
+  kGiantBaby,
+  kGiant,
+  kGiantKing,
 
-  Slime,
-  Slime_huge,
-  Slime_king,
+  kSlime,
+  kSlimeHuge,
+  kSlimeKing,
 
-  Goblin,
-  Goblin_captain,
-  Goblin_king,
+  kGoblin,
+  kGoblinCaptain,
+  kGoblinKing,
 
-  Shaman,
-  Shaman_leader,
-  shaman_king,
+  kShaman,
+  kShamanLeader,
+  kShamanKing,
 
-  Dragon_baby,
-  Dragon_adult,
-  Dragon_king
+  kDragonBaby,
+  kDragonAdult,
+  kDragonKing
 };

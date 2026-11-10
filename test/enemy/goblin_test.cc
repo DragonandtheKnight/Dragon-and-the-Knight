@@ -1,4 +1,5 @@
-// Tests for Goblin: the stats each level gets, and which skill calMove() picks.
+// Tests for Goblin: the stats each level gets, and which skill CalculateMove()
+// picks.
 //
 // The roll comes from the Rng handed to the constructor, so a fixed seed makes
 // a run reproducible and the same seed always replays the same fight. The
@@ -10,7 +11,7 @@
 // Level 3 alternates: a dash is always paid back by exactly one dash_attack,
 // and that comeback does not use up a roll. Both halves are checked below.
 
-#include "enemy/Goblin.h"
+#include "enemy/goblin.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -31,26 +32,26 @@ constexpr int kTolerance = 80;
 // One seed for every test, so a failure can be reproduced exactly.
 constexpr std::uint32_t kSeed = 20261108;
 
-std::vector<Enemy_skill> RollMoves(Goblin& goblin, int count) {
-  std::vector<Enemy_skill> moves;
+std::vector<EnemySkill> RollMoves(Goblin& goblin, int count) {
+  std::vector<EnemySkill> moves;
   moves.reserve(count);
   for (int i = 0; i < count; ++i) {
-    moves.push_back(goblin.calMove());
+    moves.push_back(goblin.CalculateMove());
   }
   return moves;
 }
 
-int CountOf(const std::vector<Enemy_skill>& moves, Enemy_skill skill) {
+int CountOf(const std::vector<EnemySkill>& moves, EnemySkill skill) {
   return static_cast<int>(std::count(moves.begin(), moves.end(), skill));
 }
 
 // The move right after a dash is forced, so those moves say nothing about the
 // odds; this keeps only the moves that came out of an actual roll.
-std::vector<Enemy_skill> RollsOnly(const std::vector<Enemy_skill>& moves) {
-  std::vector<Enemy_skill> rolls;
+std::vector<EnemySkill> RollsOnly(const std::vector<EnemySkill>& moves) {
+  std::vector<EnemySkill> rolls;
   for (std::size_t i = 0; i < moves.size(); ++i) {
     rolls.push_back(moves[i]);
-    if (moves[i] == Enemy_skill::Goblin_dash_lv3) {
+    if (moves[i] == EnemySkill::kGoblinDashLv3) {
       ++i;  // Skip the dash_attack that this dash just forced.
     }
   }
@@ -62,28 +63,28 @@ std::vector<Enemy_skill> RollsOnly(const std::vector<Enemy_skill>& moves) {
 TEST(GoblinTest, LevelOneStats) {
   Goblin goblin(1, kSeed);
 
-  EXPECT_EQ(goblin.get_name(), Enemy_type::Goblin);
-  EXPECT_EQ(goblin.get_hp(), 30);
-  EXPECT_EQ(goblin.get_difficulty(), 1);
-  EXPECT_EQ(goblin.get_level(), 1);
+  EXPECT_EQ(goblin.GetName(), EnemyType::kGoblin);
+  EXPECT_EQ(goblin.GetHp(), 30);
+  EXPECT_EQ(goblin.GetDifficulty(), 1);
+  EXPECT_EQ(goblin.GetLevel(), 1);
 }
 
 TEST(GoblinTest, LevelTwoStats) {
   Goblin goblin(2, kSeed);
 
-  EXPECT_EQ(goblin.get_name(), Enemy_type::Goblin_captain);
-  EXPECT_EQ(goblin.get_hp(), 40);
-  EXPECT_EQ(goblin.get_difficulty(), 2);
-  EXPECT_EQ(goblin.get_level(), 2);
+  EXPECT_EQ(goblin.GetName(), EnemyType::kGoblinCaptain);
+  EXPECT_EQ(goblin.GetHp(), 40);
+  EXPECT_EQ(goblin.GetDifficulty(), 2);
+  EXPECT_EQ(goblin.GetLevel(), 2);
 }
 
 TEST(GoblinTest, LevelThreeStats) {
   Goblin goblin(3, kSeed);
 
-  EXPECT_EQ(goblin.get_name(), Enemy_type::Goblin_king);
-  EXPECT_EQ(goblin.get_hp(), 50);
-  EXPECT_EQ(goblin.get_difficulty(), 3);
-  EXPECT_EQ(goblin.get_level(), 3);
+  EXPECT_EQ(goblin.GetName(), EnemyType::kGoblinKing);
+  EXPECT_EQ(goblin.GetHp(), 50);
+  EXPECT_EQ(goblin.GetDifficulty(), 3);
+  EXPECT_EQ(goblin.GetLevel(), 3);
 }
 
 // The map picks the level, so a level the stats table does not know about
@@ -91,13 +92,13 @@ TEST(GoblinTest, LevelThreeStats) {
 TEST(GoblinTest, LevelOutsideOneToThreeFallsBackToTheLevelOneGoblin) {
   Goblin goblin(4, kSeed);
 
-  EXPECT_EQ(goblin.get_name(), Enemy_type::Goblin);
-  EXPECT_EQ(goblin.get_hp(), 30);
-  EXPECT_EQ(goblin.get_difficulty(), 1);
-  EXPECT_EQ(goblin.get_level(), 4);
+  EXPECT_EQ(goblin.GetName(), EnemyType::kGoblin);
+  EXPECT_EQ(goblin.GetHp(), 30);
+  EXPECT_EQ(goblin.GetDifficulty(), 1);
+  EXPECT_EQ(goblin.GetLevel(), 4);
 
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
-  EXPECT_EQ(CountOf(moves, Enemy_skill::Goblin_hit_lv1), kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
+  EXPECT_EQ(CountOf(moves, EnemySkill::kGoblinHitLv1), kRolls);
 }
 
 // The map hands each monster a seed from its own stream. The same seed has to
@@ -119,49 +120,49 @@ TEST(GoblinTest, DifferentSeedsGiveDifferentMoves) {
 
 TEST(GoblinTest, LevelOneAlwaysUsesTheBasicHit) {
   Goblin goblin(1, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
-  EXPECT_EQ(CountOf(moves, Enemy_skill::Goblin_hit_lv1), kRolls);
+  EXPECT_EQ(CountOf(moves, EnemySkill::kGoblinHitLv1), kRolls);
 }
 
 TEST(GoblinTest, LevelTwoOnlyUsesItsTwoSkills) {
   Goblin goblin(2, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
-  const std::set<Enemy_skill> used(moves.begin(), moves.end());
-  const std::set<Enemy_skill> allowed = {Enemy_skill::Goblin_hit_lv2,
-                                         Enemy_skill::Goblin_hard_slam_lv2};
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
+  const std::set<EnemySkill> used(moves.begin(), moves.end());
+  const std::set<EnemySkill> allowed = {EnemySkill::kGoblinHitLv2,
+                                        EnemySkill::kGoblinHardSlamLv2};
 
   EXPECT_EQ(used, allowed);
 }
 
 TEST(GoblinTest, LevelTwoBasicHitIsAboutSeventyPercent) {
   Goblin goblin(2, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
-  EXPECT_NEAR(CountOf(moves, Enemy_skill::Goblin_hit_lv2), kRolls * 70 / 100,
+  EXPECT_NEAR(CountOf(moves, EnemySkill::kGoblinHitLv2), kRolls * 70 / 100,
               kTolerance);
 }
 
 TEST(GoblinTest, LevelThreeOnlyUsesItsFourSkills) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
-  const std::set<Enemy_skill> used(moves.begin(), moves.end());
-  const std::set<Enemy_skill> allowed = {
-      Enemy_skill::Goblin_hit_lv3, Enemy_skill::Goblin_hard_slam_lv3,
-      Enemy_skill::Goblin_dash_lv3, Enemy_skill::Goblin_dash_attack_lv3};
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
+  const std::set<EnemySkill> used(moves.begin(), moves.end());
+  const std::set<EnemySkill> allowed = {
+      EnemySkill::kGoblinHitLv3, EnemySkill::kGoblinHardSlamLv3,
+      EnemySkill::kGoblinDashLv3, EnemySkill::kGoblinDashAttackLv3};
 
   EXPECT_EQ(used, allowed);
 }
 
 TEST(GoblinTest, LevelThreeDashIsAlwaysPaidBackByADashAttack) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
   int dashes = 0;
   for (std::size_t i = 0; i + 1 < moves.size(); ++i) {
-    if (moves[i] == Enemy_skill::Goblin_dash_lv3) {
+    if (moves[i] == EnemySkill::kGoblinDashLv3) {
       ++dashes;
-      EXPECT_EQ(moves[i + 1], Enemy_skill::Goblin_dash_attack_lv3)
+      EXPECT_EQ(moves[i + 1], EnemySkill::kGoblinDashAttackLv3)
           << "the dash at index " << i << " was not paid back";
     }
   }
@@ -171,19 +172,19 @@ TEST(GoblinTest, LevelThreeDashIsAlwaysPaidBackByADashAttack) {
 
 TEST(GoblinTest, LevelThreeNeverOpensWithADashAttack) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
   ASSERT_FALSE(moves.empty());
-  EXPECT_NE(moves.front(), Enemy_skill::Goblin_dash_attack_lv3);
+  EXPECT_NE(moves.front(), EnemySkill::kGoblinDashAttackLv3);
 }
 
 TEST(GoblinTest, LevelThreeDashAttackNeverComesFromAnywhereElse) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
   for (std::size_t i = 1; i < moves.size(); ++i) {
-    if (moves[i] == Enemy_skill::Goblin_dash_attack_lv3) {
-      EXPECT_EQ(moves[i - 1], Enemy_skill::Goblin_dash_lv3)
+    if (moves[i] == EnemySkill::kGoblinDashAttackLv3) {
+      EXPECT_EQ(moves[i - 1], EnemySkill::kGoblinDashLv3)
           << "the dash_attack at index " << i << " did not follow a dash";
     }
   }
@@ -193,11 +194,11 @@ TEST(GoblinTest, LevelThreeDashAttackNeverComesFromAnywhereElse) {
 // difference between the two counts is that last unfinished pair.
 TEST(GoblinTest, LevelThreeEveryDashIsPaidBackExactlyOnce) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
-  const int dashes = CountOf(moves, Enemy_skill::Goblin_dash_lv3);
-  const int attacks = CountOf(moves, Enemy_skill::Goblin_dash_attack_lv3);
-  const bool ends_on_a_dash = moves.back() == Enemy_skill::Goblin_dash_lv3;
+  const int dashes = CountOf(moves, EnemySkill::kGoblinDashLv3);
+  const int attacks = CountOf(moves, EnemySkill::kGoblinDashAttackLv3);
+  const bool ends_on_a_dash = moves.back() == EnemySkill::kGoblinDashLv3;
 
   EXPECT_GT(dashes, 0);
   EXPECT_EQ(attacks, dashes - (ends_on_a_dash ? 1 : 0));
@@ -208,42 +209,42 @@ TEST(GoblinTest, LevelThreeEveryDashIsPaidBackExactlyOnce) {
 // 30 / 40 / 30.
 TEST(GoblinTest, LevelThreeRollsAreAboutThirtyFortyThirty) {
   Goblin goblin(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
-  const std::vector<Enemy_skill> rolls = RollsOnly(moves);
+  const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
+  const std::vector<EnemySkill> rolls = RollsOnly(moves);
   const int total = static_cast<int>(rolls.size());
 
-  EXPECT_NEAR(CountOf(rolls, Enemy_skill::Goblin_hit_lv3), total * 30 / 100,
+  EXPECT_NEAR(CountOf(rolls, EnemySkill::kGoblinHitLv3), total * 30 / 100,
               kTolerance);
-  EXPECT_NEAR(CountOf(rolls, Enemy_skill::Goblin_hard_slam_lv3),
-              total * 40 / 100, kTolerance);
-  EXPECT_NEAR(CountOf(rolls, Enemy_skill::Goblin_dash_lv3), total * 30 / 100,
+  EXPECT_NEAR(CountOf(rolls, EnemySkill::kGoblinHardSlamLv3), total * 40 / 100,
+              kTolerance);
+  EXPECT_NEAR(CountOf(rolls, EnemySkill::kGoblinDashLv3), total * 30 / 100,
               kTolerance);
 }
 
 TEST(GoblinTest, ADefeatedGoblinReturnsAlreadyDead) {
   Goblin goblin(2, kSeed);
-  goblin.deal_dmg(40);  // Level 2 has exactly 40 hp.
+  goblin.TakeDamage(40);  // Level 2 has exactly 40 hp.
 
-  ASSERT_FALSE(goblin.is_alive());
-  EXPECT_EQ(goblin.calMove(), Enemy_skill::Already_dead);
+  ASSERT_FALSE(goblin.IsAlive());
+  EXPECT_EQ(goblin.CalculateMove(), EnemySkill::kAlreadyDead);
 }
 
 // The battle code may still ask a corpse for a move once; it must keep saying
 // "already dead" instead of rolling again.
 TEST(GoblinTest, ADefeatedGoblinKeepsReturningAlreadyDead) {
   Goblin goblin(3, kSeed);
-  goblin.deal_dmg(500);
+  goblin.TakeDamage(500);
 
   for (int i = 0; i < 10; ++i) {
-    EXPECT_EQ(goblin.calMove(), Enemy_skill::Already_dead);
+    EXPECT_EQ(goblin.CalculateMove(), EnemySkill::kAlreadyDead);
   }
 }
 
 TEST(GoblinTest, ALivingGoblinNeverReturnsAlreadyDead) {
   for (int level = 1; level <= 3; ++level) {
     Goblin goblin(level, kSeed);
-    const std::vector<Enemy_skill> moves = RollMoves(goblin, kRolls);
+    const std::vector<EnemySkill> moves = RollMoves(goblin, kRolls);
 
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Already_dead), 0) << level;
+    EXPECT_EQ(CountOf(moves, EnemySkill::kAlreadyDead), 0) << level;
   }
 }

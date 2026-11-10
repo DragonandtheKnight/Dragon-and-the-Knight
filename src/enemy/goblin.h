@@ -1,18 +1,17 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include <cstdint>
 
-#include "enemy/Enemy.h"
+#include "enemy/enemy.h"
 
 class Goblin : public Enemy {
- private:
-  Enemy_type type_level(int level);
-  int max_hp_level(int level);
-  int dfficulty_level(int level);
-  bool goblin_was_last_move_dash_;
-
  public:
   Goblin(int level, std::uint32_t seed);
-  Enemy_skill calMove() override;
+  EnemySkill CalculateMove() override;
+
+ private:
+  EnemyType TypeForLevel(int level);
+  int MaxHpForLevel(int level);
+  int DifficultyForLevel(int level);
+  bool goblin_was_last_move_dash_;
 };

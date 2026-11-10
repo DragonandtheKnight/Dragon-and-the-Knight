@@ -1,73 +1,75 @@
-#include "enemy/Giant.h"
+#include "enemy/giant.h"
+
+#include <cstdint>
 
 Giant::Giant(int level, std::uint32_t seed)
-    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
-            level, seed) {
+    : Enemy(TypeForLevel(level), MaxHpForLevel(level),
+            DifficultyForLevel(level), level, seed) {
   giant_was_last_move_charge_ = false;
 }
 
-Enemy_skill Giant::calMove() {
-  if (!is_alive()) {
-    return Enemy_skill::Already_dead;
+EnemySkill Giant::CalculateMove() {
+  if (!IsAlive()) {
+    return EnemySkill::kAlreadyDead;
   }
   int r = rng_.UniformInt(1, 100);
-  switch (get_level()) {
+  switch (GetLevel()) {
     case 1:
       if (r <= 70) {
-        return Enemy_skill::Giant_slam_lv1;
+        return EnemySkill::kGiantSlamLv1;
       } else {
-        return Enemy_skill::Giant_defend_lv1;
+        return EnemySkill::kGiantDefendLv1;
       }
       break;
     case 2:
       if (r <= 40) {
-        return Enemy_skill::Giant_slam_lv2;
+        return EnemySkill::kGiantSlamLv2;
       } else if (r <= 70) {
-        return Enemy_skill::Giant_defend_lv2;
+        return EnemySkill::kGiantDefendLv2;
       } else {
-        return Enemy_skill::Giant_charge_lv2;
+        return EnemySkill::kGiantChargeLv2;
       }
       break;
     case 3:
       if (giant_was_last_move_charge_ == true) {
         giant_was_last_move_charge_ = false;
-        return Enemy_skill::Giant_super_charge_hit_lv3;
+        return EnemySkill::kGiantSuperChargeHitLv3;
       }
       if (r <= 40) {
-        return Enemy_skill::Giant_slam_lv3;
+        return EnemySkill::kGiantSlamLv3;
       } else if (r <= 70) {
-        return Enemy_skill::Giant_defend_lv3;
+        return EnemySkill::kGiantDefendLv3;
       } else {
         giant_was_last_move_charge_ = true;
-        return Enemy_skill::Giant_super_charge_lv3;
+        return EnemySkill::kGiantSuperChargeLv3;
       }
       break;
     default:
-      return Enemy_skill::Giant_slam_lv1;
+      return EnemySkill::kGiantSlamLv1;
       break;
   }
 }
 
-Enemy_type Giant::type_level(int level) {
-  Enemy_type type;
+EnemyType Giant::TypeForLevel(int level) {
+  EnemyType type;
   switch (level) {
     case 1:
-      type = Enemy_type::Giant_baby;
+      type = EnemyType::kGiantBaby;
       break;
     case 2:
-      type = Enemy_type::Giant;
+      type = EnemyType::kGiant;
       break;
     case 3:
-      type = Enemy_type::Giant_king;
+      type = EnemyType::kGiantKing;
       break;
     default:
-      type = Enemy_type::Giant_baby;
+      type = EnemyType::kGiantBaby;
       break;
   }
   return type;
 }
 
-int Giant::max_hp_level(int level) {
+int Giant::MaxHpForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -86,7 +88,7 @@ int Giant::max_hp_level(int level) {
   return temp;
 }
 
-int Giant::dfficulty_level(int level) {
+int Giant::DifficultyForLevel(int level) {
   int temp;
   switch (level) {
     case 1:

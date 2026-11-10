@@ -1,68 +1,70 @@
-#include "enemy/Slime.h"
+#include "enemy/slime.h"
+
+#include <cstdint>
 
 Slime::Slime(int level, std::uint32_t seed)
-    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
-            level, seed) {}
+    : Enemy(TypeForLevel(level), MaxHpForLevel(level),
+            DifficultyForLevel(level), level, seed) {}
 
-Enemy_skill Slime::calMove() {
-  if (!is_alive()) {
-    return Enemy_skill::Already_dead;
+EnemySkill Slime::CalculateMove() {
+  if (!IsAlive()) {
+    return EnemySkill::kAlreadyDead;
   }
   int r = rng_.UniformInt(1, 100);
-  switch (get_level()) {
+  switch (GetLevel()) {
     case 1:
-      if (get_hp() == get_max_hp()) {
-        return Enemy_skill::Slime_slap_lv1;
+      if (GetHp() == GetMaxHp()) {
+        return EnemySkill::kSlimeSlapLv1;
       } else if (r <= 50) {
-        return Enemy_skill::Slime_slap_lv1;
+        return EnemySkill::kSlimeSlapLv1;
       } else {
-        return Enemy_skill::Slime_heal_lv1;
+        return EnemySkill::kSlimeHealLv1;
       }
       break;
     case 2:
-      if (get_hp() == get_max_hp()) {
-        return Enemy_skill::Slime_slap_lv2;
+      if (GetHp() == GetMaxHp()) {
+        return EnemySkill::kSlimeSlapLv2;
       } else if (r <= 50) {
-        return Enemy_skill::Slime_slap_lv2;
+        return EnemySkill::kSlimeSlapLv2;
       } else {
-        return Enemy_skill::Slime_heal_lv2;
+        return EnemySkill::kSlimeHealLv2;
       }
       break;
     case 3:
-      if (get_hp() == get_max_hp()) {
-        return Enemy_skill::Slime_slap_lv3;
+      if (GetHp() == GetMaxHp()) {
+        return EnemySkill::kSlimeSlapLv3;
       } else if (r <= 50) {
-        return Enemy_skill::Slime_slap_lv3;
+        return EnemySkill::kSlimeSlapLv3;
       } else {
-        return Enemy_skill::Slime_heal_lv3;
+        return EnemySkill::kSlimeHealLv3;
       }
       break;
     default:
-      return Enemy_skill::Slime_slap_lv1;
+      return EnemySkill::kSlimeSlapLv1;
       break;
   }
 }
 
-Enemy_type Slime::type_level(int level) {
-  Enemy_type type;
+EnemyType Slime::TypeForLevel(int level) {
+  EnemyType type;
   switch (level) {
     case 1:
-      type = Enemy_type::Slime;
+      type = EnemyType::kSlime;
       break;
     case 2:
-      type = Enemy_type::Slime_huge;
+      type = EnemyType::kSlimeHuge;
       break;
     case 3:
-      type = Enemy_type::Slime_king;
+      type = EnemyType::kSlimeKing;
       break;
     default:
-      type = Enemy_type::Slime;
+      type = EnemyType::kSlime;
       break;
   }
   return type;
 }
 
-int Slime::max_hp_level(int level) {
+int Slime::MaxHpForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -81,7 +83,7 @@ int Slime::max_hp_level(int level) {
   return temp;
 }
 
-int Slime::dfficulty_level(int level) {
+int Slime::DifficultyForLevel(int level) {
   int temp;
   switch (level) {
     case 1:

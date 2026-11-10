@@ -1,69 +1,71 @@
-#include "enemy/Shaman.h"
+#include "enemy/shaman.h"
+
+#include <cstdint>
 
 Shaman::Shaman(int level, std::uint32_t seed)
-    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
-            level, seed) {}
+    : Enemy(TypeForLevel(level), MaxHpForLevel(level),
+            DifficultyForLevel(level), level, seed) {}
 
-Enemy_skill Shaman::calMove() {
-  if (!is_alive()) {
-    return Enemy_skill::Already_dead;
+EnemySkill Shaman::CalculateMove() {
+  if (!IsAlive()) {
+    return EnemySkill::kAlreadyDead;
   }
   int r = rng_.UniformInt(1, 100);
-  switch (get_level()) {
+  switch (GetLevel()) {
     case 1:
       if (r <= 70) {
-        return Enemy_skill::Shaman_curse_lv1;
+        return EnemySkill::kShamanCurseLv1;
       } else {
-        return Enemy_skill::Shaman_heal_all_lv1;
+        return EnemySkill::kShamanHealAllLv1;
       }
       break;
     case 2:
       if (r <= 40) {
-        return Enemy_skill::Shaman_curse_lv2;
+        return EnemySkill::kShamanCurseLv2;
       } else if (r <= 70) {
-        return Enemy_skill::Shaman_heal_all_lv2;
+        return EnemySkill::kShamanHealAllLv2;
       } else {
-        return Enemy_skill::Shaman_give_shield_lv2;
+        return EnemySkill::kShamanGiveShieldLv2;
       }
       break;
     case 3:
-      if (get_hp() <= (get_max_hp() / 2)) {
-        return Enemy_skill::Shaman_heal_self_lv3;
+      if (GetHp() <= (GetMaxHp() / 2)) {
+        return EnemySkill::kShamanHealSelfLv3;
       }
       if (r <= 20) {
-        return Enemy_skill::Shaman_curse_lv3;
+        return EnemySkill::kShamanCurseLv3;
       } else if (r <= 70) {
-        return Enemy_skill::Shaman_heal_all_lv3;
+        return EnemySkill::kShamanHealAllLv3;
       } else {
-        return Enemy_skill::Shaman_give_shield_lv3;
+        return EnemySkill::kShamanGiveShieldLv3;
       }
       break;
     default:
-      return Enemy_skill::Shaman_curse_lv1;
+      return EnemySkill::kShamanCurseLv1;
       break;
   }
 }
 
-Enemy_type Shaman::type_level(int level) {
-  Enemy_type type;
+EnemyType Shaman::TypeForLevel(int level) {
+  EnemyType type;
   switch (level) {
     case 1:
-      type = Enemy_type::Shaman;
+      type = EnemyType::kShaman;
       break;
     case 2:
-      type = Enemy_type::Shaman_leader;
+      type = EnemyType::kShamanLeader;
       break;
     case 3:
-      type = Enemy_type::shaman_king;
+      type = EnemyType::kShamanKing;
       break;
     default:
-      type = Enemy_type::Shaman;
+      type = EnemyType::kShaman;
       break;
   }
   return type;
 }
 
-int Shaman::max_hp_level(int level) {
+int Shaman::MaxHpForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -82,7 +84,7 @@ int Shaman::max_hp_level(int level) {
   return temp;
 }
 
-int Shaman::dfficulty_level(int level) {
+int Shaman::DifficultyForLevel(int level) {
   int temp;
   switch (level) {
     case 1:

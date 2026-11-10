@@ -7,7 +7,7 @@
 // the dragon to be badly hurt first. How often any of this fires is balance
 // and stays in the implementation.
 
-#include "enemy/Dragon.h"
+#include "enemy/dragon.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -23,39 +23,38 @@ constexpr int kRolls = 200;
 
 constexpr std::uint32_t kSeed = 20261108;
 
-std::vector<Enemy_skill> RollMoves(Dragon& dragon, int count) {
-  std::vector<Enemy_skill> moves;
+std::vector<EnemySkill> RollMoves(Dragon& dragon, int count) {
+  std::vector<EnemySkill> moves;
   moves.reserve(count);
   for (int i = 0; i < count; ++i) {
-    moves.push_back(dragon.calMove());
+    moves.push_back(dragon.CalculateMove());
   }
   return moves;
 }
 
-int CountOf(const std::vector<Enemy_skill>& moves, Enemy_skill skill) {
+int CountOf(const std::vector<EnemySkill>& moves, EnemySkill skill) {
   return static_cast<int>(std::count(moves.begin(), moves.end(), skill));
 }
 
 // Every skill the dragon of this level is allowed to pick, and no other.
-std::set<Enemy_skill> SkillsOf(int level) {
+std::set<EnemySkill> SkillsOf(int level) {
   switch (level) {
     case 1:
-      return {Enemy_skill::Dragon_claw_lv1, Enemy_skill::Dragon_breath_lv1};
+      return {EnemySkill::kDragonClawLv1, EnemySkill::kDragonBreathLv1};
     case 2:
-      return {Enemy_skill::Dragon_claw_lv2, Enemy_skill::Dragon_breath_lv2,
-              Enemy_skill::Dragon_fly_lv2, Enemy_skill::Dragon_drop_slam_lv2};
+      return {EnemySkill::kDragonClawLv2, EnemySkill::kDragonBreathLv2,
+              EnemySkill::kDragonFlyLv2, EnemySkill::kDragonDropSlamLv2};
     default:
-      return {Enemy_skill::Dragon_claw_lv3, Enemy_skill::Dragon_breath_lv3,
-              Enemy_skill::Dragon_fly_lv3,
-              Enemy_skill::Dragon_drop_slam_lv3,
-              Enemy_skill::Dragon_roar_lv3};
+      return {EnemySkill::kDragonClawLv3, EnemySkill::kDragonBreathLv3,
+              EnemySkill::kDragonFlyLv3, EnemySkill::kDragonDropSlamLv3,
+              EnemySkill::kDragonRoarLv3};
   }
 }
 
 // Leaves the dragon at the given fraction of its health, rounded down.
 void HurtTo(Dragon& dragon, int numerator, int denominator) {
-  dragon.deal_dmg(dragon.get_max_hp() -
-                  dragon.get_max_hp() * numerator / denominator);
+  dragon.TakeDamage(dragon.GetMaxHp() -
+                    dragon.GetMaxHp() * numerator / denominator);
 }
 
 }  // namespace
@@ -64,10 +63,10 @@ void HurtTo(Dragon& dragon, int numerator, int denominator) {
 // belongs to one of those moments cannot sneak in through the other.
 TEST(DragonTest, DragonOnlyUsesTheSkillsOfItsOwnLevel) {
   for (int level = 1; level <= 3; ++level) {
-    const std::set<Enemy_skill> allowed = SkillsOf(level);
+    const std::set<EnemySkill> allowed = SkillsOf(level);
 
     Dragon healthy(level, kSeed);
-    const std::vector<Enemy_skill> full = RollMoves(healthy, kRolls);
+    const std::vector<EnemySkill> full = RollMoves(healthy, kRolls);
     for (std::size_t i = 0; i < full.size(); ++i) {
       EXPECT_EQ(allowed.count(full[i]), 1u)
           << "level " << level << ", full health, index " << i;
@@ -75,7 +74,7 @@ TEST(DragonTest, DragonOnlyUsesTheSkillsOfItsOwnLevel) {
 
     Dragon hurt(level, kSeed);
     HurtTo(hurt, 1, 5);
-    const std::vector<Enemy_skill> low = RollMoves(hurt, kRolls);
+    const std::vector<EnemySkill> low = RollMoves(hurt, kRolls);
     for (std::size_t i = 0; i < low.size(); ++i) {
       EXPECT_EQ(allowed.count(low[i]), 1u)
           << "level " << level << ", hurt, index " << i;
@@ -85,17 +84,17 @@ TEST(DragonTest, DragonOnlyUsesTheSkillsOfItsOwnLevel) {
 
 TEST(DragonTest, HealthyDragonNeverRoars) {
   Dragon dragon(3, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls);
 
-  EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_roar_lv3), 0);
+  EXPECT_EQ(CountOf(moves, EnemySkill::kDragonRoarLv3), 0);
 }
 
 TEST(DragonTest, DragonSlightlyHurtNeverRoars) {
   Dragon dragon(3, kSeed);
   HurtTo(dragon, 3, 5);
-  const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls);
 
-  EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_roar_lv3), 0);
+  EXPECT_EQ(CountOf(moves, EnemySkill::kDragonRoarLv3), 0);
 }
 
 // Flying is only allowed while the dragon still has more than half its health.
@@ -103,26 +102,26 @@ TEST(DragonTest, DragonBelowHalfHealthNeverFlies) {
   for (int level = 2; level <= 3; ++level) {
     Dragon dragon(level, kSeed);
     HurtTo(dragon, 2, 5);
-    const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
+    const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls);
 
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv2), 0) << level;
-    EXPECT_EQ(CountOf(moves, Enemy_skill::Dragon_fly_lv3), 0) << level;
+    EXPECT_EQ(CountOf(moves, EnemySkill::kDragonFlyLv2), 0) << level;
+    EXPECT_EQ(CountOf(moves, EnemySkill::kDragonFlyLv3), 0) << level;
   }
 }
 
 TEST(DragonTest, FlyingDragonAlwaysSlamsOnTheNextTurn) {
-  const std::set<std::pair<int, Enemy_skill>> flights = {
-      {2, Enemy_skill::Dragon_fly_lv2}, {3, Enemy_skill::Dragon_fly_lv3}};
+  const std::set<std::pair<int, EnemySkill>> flights = {
+      {2, EnemySkill::kDragonFlyLv2}, {3, EnemySkill::kDragonFlyLv3}};
   (void)flights;
 
   Dragon two(2, kSeed);
-  const std::vector<Enemy_skill> moves = RollMoves(two, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(two, kRolls);
 
   int flights_seen = 0;
   for (std::size_t i = 0; i + 1 < moves.size(); ++i) {
-    if (moves[i] == Enemy_skill::Dragon_fly_lv2) {
+    if (moves[i] == EnemySkill::kDragonFlyLv2) {
       ++flights_seen;
-      EXPECT_EQ(moves[i + 1], Enemy_skill::Dragon_drop_slam_lv2)
+      EXPECT_EQ(moves[i + 1], EnemySkill::kDragonDropSlamLv2)
           << "the flight at index " << i << " did not slam";
     }
   }
@@ -133,9 +132,9 @@ TEST(DragonTest, FlyingDragonAlwaysSlamsOnTheNextTurn) {
 TEST(DragonTest, SlamsOnlyHappenAfterAFlight) {
   for (int level = 2; level <= 3; ++level) {
     Dragon dragon(level, kSeed);
-    const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
-    const Enemy_skill slam = level == 2 ? Enemy_skill::Dragon_drop_slam_lv2
-                                        : Enemy_skill::Dragon_drop_slam_lv3;
+    const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls);
+    const EnemySkill slam = level == 2 ? EnemySkill::kDragonDropSlamLv2
+                                       : EnemySkill::kDragonDropSlamLv3;
 
     for (std::size_t i = 0; i < moves.size(); ++i) {
       if (moves[i] != slam) {
@@ -146,8 +145,8 @@ TEST(DragonTest, SlamsOnlyHappenAfterAFlight) {
         continue;
       }
       const bool came_from_flight =
-          moves[i - 1] == (level == 2 ? Enemy_skill::Dragon_fly_lv2
-                                      : Enemy_skill::Dragon_fly_lv3);
+          moves[i - 1] ==
+          (level == 2 ? EnemySkill::kDragonFlyLv2 : EnemySkill::kDragonFlyLv3);
       EXPECT_TRUE(came_from_flight)
           << level << " slammed without flying at " << i;
     }
@@ -159,25 +158,25 @@ TEST(DragonTest, SlamsOnlyHappenAfterAFlight) {
 TEST(DragonTest, RoarHappensAtMostOnceEvenWhenBadlyHurt) {
   Dragon dragon(3, kSeed);
   HurtTo(dragon, 1, 5);
-  const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls * 3);
+  const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls * 3);
 
-  EXPECT_LE(CountOf(moves, Enemy_skill::Dragon_roar_lv3), 1);
+  EXPECT_LE(CountOf(moves, EnemySkill::kDragonRoarLv3), 1);
 }
 
 TEST(DragonTest, DyingDragonRoarsWhenItIsNearlyOut) {
   Dragon dragon(3, kSeed);
   HurtTo(dragon, 1, 5);
-  const std::vector<Enemy_skill> moves = RollMoves(dragon, kRolls);
+  const std::vector<EnemySkill> moves = RollMoves(dragon, kRolls);
 
-  EXPECT_GT(CountOf(moves, Enemy_skill::Dragon_roar_lv3), 0);
+  EXPECT_GT(CountOf(moves, EnemySkill::kDragonRoarLv3), 0);
 }
 
 TEST(DragonTest, DeadDragonReturnsAlreadyDead) {
   Dragon dragon(1, kSeed);
-  dragon.deal_dmg(dragon.get_hp());
+  dragon.TakeDamage(dragon.GetHp());
 
-  ASSERT_FALSE(dragon.is_alive());
+  ASSERT_FALSE(dragon.IsAlive());
   for (int i = 0; i < 10; ++i) {
-    EXPECT_EQ(dragon.calMove(), Enemy_skill::Already_dead);
+    EXPECT_EQ(dragon.CalculateMove(), EnemySkill::kAlreadyDead);
   }
 }

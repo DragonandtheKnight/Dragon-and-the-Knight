@@ -1,110 +1,112 @@
-#include "enemy/Dragon.h"
+#include "enemy/dragon.h"
+
+#include <cstdint>
 
 Dragon::Dragon(int level, std::uint32_t seed)
-    : Enemy(type_level(level), max_hp_level(level), dfficulty_level(level),
-            level, seed) {
+    : Enemy(TypeForLevel(level), MaxHpForLevel(level),
+            DifficultyForLevel(level), level, seed) {
   dragon_did_roar_ = false;
   dragon_was_last_move_fly_ = false;
 }
 
-Enemy_skill Dragon::calMove() {
-  if (!is_alive()) {
-    return Enemy_skill::Already_dead;
+EnemySkill Dragon::CalculateMove() {
+  if (!IsAlive()) {
+    return EnemySkill::kAlreadyDead;
   }
   int r = rng_.UniformInt(1, 100);
-  switch (get_level()) {
+  switch (GetLevel()) {
     case 1:
       if (r <= 70) {
-        return Enemy_skill::Dragon_claw_lv1;
+        return EnemySkill::kDragonClawLv1;
       } else {
-        return Enemy_skill::Dragon_breath_lv1;
+        return EnemySkill::kDragonBreathLv1;
       }
       break;
     case 2:
       if (dragon_was_last_move_fly_ == true) {
         dragon_was_last_move_fly_ = false;
-        return Enemy_skill::Dragon_drop_slam_lv2;
+        return EnemySkill::kDragonDropSlamLv2;
       }
-      if (get_hp() >= (get_max_hp() / 2)) {
+      if (GetHp() >= (GetMaxHp() / 2)) {
         if (r <= 40) {
-          return Enemy_skill::Dragon_claw_lv2;
+          return EnemySkill::kDragonClawLv2;
         } else if (r <= 70) {
-          return Enemy_skill::Dragon_breath_lv2;
+          return EnemySkill::kDragonBreathLv2;
         } else {
           dragon_was_last_move_fly_ = true;
-          return Enemy_skill::Dragon_fly_lv2;
+          return EnemySkill::kDragonFlyLv2;
         }
       } else if (r <= 70) {
-        return Enemy_skill::Dragon_claw_lv2;
+        return EnemySkill::kDragonClawLv2;
       } else {
-        return Enemy_skill::Dragon_breath_lv2;
+        return EnemySkill::kDragonBreathLv2;
       }
       break;
     case 3:
       if (dragon_was_last_move_fly_ == true) {
         dragon_was_last_move_fly_ = false;
-        return Enemy_skill::Dragon_drop_slam_lv3;
+        return EnemySkill::kDragonDropSlamLv3;
       }
-      if (get_hp() >= (get_max_hp() / 2)) {
+      if (GetHp() >= (GetMaxHp() / 2)) {
         if (r <= 40) {
-          return Enemy_skill::Dragon_claw_lv3;
+          return EnemySkill::kDragonClawLv3;
         } else if (r <= 70) {
-          return Enemy_skill::Dragon_breath_lv3;
+          return EnemySkill::kDragonBreathLv3;
         } else {
           dragon_was_last_move_fly_ = true;
-          return Enemy_skill::Dragon_fly_lv3;
+          return EnemySkill::kDragonFlyLv3;
         }
-      } else if (get_hp() >= (get_max_hp() / 4)) {
+      } else if (GetHp() >= (GetMaxHp() / 4)) {
         if (r <= 20 || (r > 40 && r <= 55) || (r > 70 && r <= 85)) {
           if (dragon_did_roar_ == false) {
             dragon_did_roar_ = true;
-            return Enemy_skill::Dragon_roar_lv3;
+            return EnemySkill::kDragonRoarLv3;
           }
         }
         if (r <= 50) {
-          return Enemy_skill::Dragon_claw_lv3;
+          return EnemySkill::kDragonClawLv3;
         } else {
-          return Enemy_skill::Dragon_breath_lv3;
+          return EnemySkill::kDragonBreathLv3;
         }
       } else {
         if (dragon_did_roar_ == false) {
           dragon_did_roar_ = true;
-          return Enemy_skill::Dragon_roar_lv3;
+          return EnemySkill::kDragonRoarLv3;
         } else {
           if (r <= 30) {
-            return Enemy_skill::Dragon_claw_lv3;
+            return EnemySkill::kDragonClawLv3;
           } else {
-            return Enemy_skill::Dragon_breath_lv3;
+            return EnemySkill::kDragonBreathLv3;
           }
         }
       }
       break;
     default:
-      return Enemy_skill::Dragon_claw_lv1;
+      return EnemySkill::kDragonClawLv1;
       break;
   }
 }
 
-Enemy_type Dragon::type_level(int level) {
-  Enemy_type type;
+EnemyType Dragon::TypeForLevel(int level) {
+  EnemyType type;
   switch (level) {
     case 1:
-      type = Enemy_type::Dragon_baby;
+      type = EnemyType::kDragonBaby;
       break;
     case 2:
-      type = Enemy_type::Dragon_adult;
+      type = EnemyType::kDragonAdult;
       break;
     case 3:
-      type = Enemy_type::Dragon_king;
+      type = EnemyType::kDragonKing;
       break;
     default:
-      type = Enemy_type::Dragon_baby;
+      type = EnemyType::kDragonBaby;
       break;
   }
   return type;
 }
 
-int Dragon::max_hp_level(int level) {
+int Dragon::MaxHpForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
@@ -123,7 +125,7 @@ int Dragon::max_hp_level(int level) {
   return temp;
 }
 
-int Dragon::dfficulty_level(int level) {
+int Dragon::DifficultyForLevel(int level) {
   int temp;
   switch (level) {
     case 1:
