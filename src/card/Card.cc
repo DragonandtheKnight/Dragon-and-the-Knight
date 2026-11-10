@@ -77,4 +77,3 @@ void Card::applyEffect(Player& player, Enemy& enemy) const {
   EffectContext context{&player, &enemy};
   applyEffect(context);
 }
-
