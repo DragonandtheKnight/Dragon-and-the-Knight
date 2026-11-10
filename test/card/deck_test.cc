@@ -25,7 +25,7 @@
 Card MakeDeckTestCard(int id) {
   return Card("Fixture " + std::to_string(id),
               "Description " + std::to_string(id), CardRarity::C,
-              CardType::Special, id, id + 10);
+              CardType::kSpecial, id, id + 10);
 }
 
 using CardMetadata =

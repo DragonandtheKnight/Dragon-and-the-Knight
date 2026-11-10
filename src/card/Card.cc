@@ -36,29 +36,17 @@ Card& Card::operator=(const Card& other) {
   return *this;
 }
 
-std::string Card::getName() const {
-  return name;
-}
+std::string Card::getName() const { return name; }
 
-std::string Card::getDescription() const {
-  return description;
-}
+std::string Card::getDescription() const { return description; }
 
-CardRarity Card::getRarity() const {
-  return rarity;
-}
+CardRarity Card::getRarity() const { return rarity; }
 
-int Card::getCost() const {
-  return cost;
-}
+int Card::getCost() const { return cost; }
 
-CardType Card::getType() const {
-  return type;
-}
+CardType Card::getType() const { return type; }
 
-int Card::getValue() const {
-  return value;
-}
+int Card::getValue() const { return value; }
 
 void Card::addEffect(std::unique_ptr<CardEffect> effect) {
   if (!effect) {
