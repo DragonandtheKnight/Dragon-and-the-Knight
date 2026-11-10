@@ -85,8 +85,12 @@ class CardTest : public ::testing::Test {
   EffectCalls calls_;
   int clones_ = 0;
   EffectContext context_;
-  Card card_{"Test card", "Metadata fixture", CardRarity::VR, CardType::Special,
-             3, 7};
+  Card card_{"Test card",
+             "Metadata fixture",
+             CardRarity::VR,
+             CardType::kSpecial,
+             3,
+             7};
 };
 
 TEST_F(CardTest, ConstructorPreservesMetadata) {
@@ -97,13 +101,13 @@ TEST_F(CardTest, ConstructorPreservesMetadata) {
 }
 
 TEST_F(CardTest, PreservesPrimaryTypeAndApCost) {
-  for (CardType type : {CardType::Attack, CardType::Defense, CardType::Heal,
-                        CardType::Special}) {
+  for (CardType type : {CardType::kAttack, CardType::kDefense, CardType::kHeal,
+                        CardType::kSpecial}) {
     Card card("Type fixture", "", CardRarity::C, type, 2, 0);
     EXPECT_EQ(card.getType(), type);
     EXPECT_EQ(card.getCost(), 2);
   }
-  Card free_card("Zero cost fixture", "", CardRarity::R, CardType::Heal, 0, 0);
+  Card free_card("Zero cost fixture", "", CardRarity::R, CardType::kHeal, 0, 0);
   EXPECT_EQ(free_card.getCost(), 0);
 }
 
@@ -133,8 +137,8 @@ TEST_F(CardTest, MultipleEffectsExecuteInInsertionOrderOnEveryApplication) {
   card_.applyEffect(context_);
   card_.applyEffect(context_);
 
-  EXPECT_EQ(calls_, (EffectCalls{{3, 1}, {1, 1}, {2, 1},
-                                {3, 2}, {1, 2}, {2, 2}}));
+  EXPECT_EQ(calls_,
+            (EffectCalls{{3, 1}, {1, 1}, {2, 1}, {3, 2}, {1, 2}, {2, 2}}));
   EXPECT_EQ(clones_, 0);
 }
 
@@ -163,7 +167,7 @@ TEST_F(CardTest, CopyConstructorClonesStateIntoIndependentEffects) {
 
 TEST_F(CardTest, CopyRemainsUsableAfterOriginalIsDestroyed) {
   Card copy = [this]() {
-    Card original("Scoped fixture", "", CardRarity::C, CardType::Attack, 1, 0);
+    Card original("Scoped fixture", "", CardRarity::C, CardType::kAttack, 1, 0);
     AddRecordingEffect(original, 1);
     return Card(original);
   }();
@@ -177,7 +181,7 @@ TEST_F(CardTest, CopyAssignmentReplacesMetadataAndDeepCopiesEffects) {
   AddRecordingEffect(card_, 1);
   AddRecordingEffect(card_, 2);
   Card assigned("Old fixture", "Old description", CardRarity::E,
-                CardType::Defense, 1, 9);
+                CardType::kDefense, 1, 9);
   AddRecordingEffect(assigned, 9);
 
   EXPECT_EQ(&(assigned = card_), &assigned);
@@ -217,7 +221,7 @@ TEST_F(CardTest, FailedCopyAssignmentLeavesDestinationUnchanged) {
   AddRecordingEffect(card_, 1);
   card_.addEffect(std::make_unique<FailingCloneEffect>());
   Card destination("Original fixture", "Keep description", CardRarity::R,
-                   CardType::Defense, 1, 4);
+                   CardType::kDefense, 1, 4);
   const Card expected_metadata(destination);
   AddRecordingEffect(destination, 9);
 
@@ -251,7 +255,7 @@ TEST_F(CardTest, MoveAssignmentReplacesEffectsWithoutCloning) {
   static_assert(std::is_nothrow_move_assignable_v<Card>);
   const Card expected_metadata(card_);
   AddRecordingEffect(card_, 1);
-  Card moved("Old fixture", "", CardRarity::C, CardType::Attack, 0, 0);
+  Card moved("Old fixture", "", CardRarity::C, CardType::kAttack, 0, 0);
   AddRecordingEffect(moved, 9);
 
   EXPECT_EQ(&(moved = std::move(card_)), &moved);

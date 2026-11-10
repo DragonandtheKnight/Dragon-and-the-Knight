@@ -32,7 +32,8 @@ Your project description should summarize the project you are proposing. Be sure
 
 
 ## User Interface Specification- (Navigation Diagram&Screen Layouts)
-<img width="7331" height="3908" alt="shapes at 26-10-24 16 48 25" src="https://github.com/user-attachments/assets/36d55315-6924-4178-b5f0-2f43197e6931" />
+<img width="7987" height="3908" alt="shapes at 26-10-26 19 09 37" src="https://github.com/user-attachments/assets/4d1c8ee3-f42e-47b9-8e4c-a7034d4b34f2" />
+
 
 Please check online version by following URL ⬇️
 
@@ -45,6 +46,18 @@ Please check online version by following URL ⬇️
 
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
+
+### Class Diagram Description
+
+The Game class controls the main game process including starting the game, running the game, moving to the next floor, and ending the game. The FloorMap class manages the map and the paths that players can choose. The Level class is an abstract base class, and Combat, Shop, Rest, Event, and Entertainment inherit from it. Each level has different functions. For example, players can fight monsters in Combat, buy cards in Shop, and recover HP in Rest.
+
+The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddBlock(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
+
+The Card class stores information about each card including its name, type, cost, rarity, and effect value. The Deck class manages the player's cards including drawing, shuffling, and discarding cards. The Battle class controls the turn based combat system. It manages player turns, enemy turns, playing cards, and checking whether the battle has ended.
+
+The Enemy class represents the monsters that players fight during the game. Different enemies can have different abilities.
+
+Our class diagram also shows different relationships between classes, including inheritance, composition, and association. These relationships help us connect different parts of the game.
 
 ## Testing
 
