@@ -253,3 +253,43 @@ TEST(EnemyTest, DamageDoesNotLowerMaxHp) {
   EXPECT_EQ(enemy.get_hp(), 10);
   EXPECT_EQ(enemy.get_max_hp(), 30);
 }
+
+// A negative amount is a caller bug, not a way to run the rules backwards:
+// every entry point ignores it instead of healing or padding the target.
+TEST(EnemyTest, DealDmgIgnoresNegativeAmounts) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+
+  enemy.deal_dmg(-5);
+
+  EXPECT_EQ(enemy.get_hp(), 30);
+  EXPECT_EQ(enemy.get_shield(), 0);
+}
+
+TEST(EnemyTest, HealIgnoresNegativeAmounts) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+
+  enemy.heal(-40);
+
+  EXPECT_EQ(enemy.get_hp(), 30);
+  EXPECT_TRUE(enemy.is_alive());
+}
+
+TEST(EnemyTest, AddShieldIgnoresNegativeAmounts) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+
+  enemy.add_shield(-10);
+
+  EXPECT_EQ(enemy.get_shield(), 0);
+}
+
+// The combination the review found: a negative shield must not turn the next
+// ordinary hit into a bigger one.
+TEST(EnemyTest, NegativeShieldDoesNotAmplifyTheNextHit) {
+  StubEnemy enemy(Enemy_type::Goblin, 30, 1, 1, 7);
+  enemy.add_shield(-10);
+
+  enemy.deal_dmg(5);
+
+  EXPECT_EQ(enemy.get_hp(), 25);
+  EXPECT_EQ(enemy.get_shield(), 0);
+}
