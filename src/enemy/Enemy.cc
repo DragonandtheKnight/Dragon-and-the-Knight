@@ -14,9 +14,10 @@ Enemy::Enemy(Enemy_type name, int max_hp, int difficulty, int level,
   is_alive_ = true;
 }
 
-Enemy_type Enemy::get_name() { return name_; }
+Enemy_type Enemy::get_name() const { return name_; }
 
 void Enemy::deal_dmg(int dmg) {
+  if (dmg <= 0) return;
   int temp;
   temp = hp_ + shield_ - dmg;
   if (temp <= 0) {
@@ -36,11 +37,12 @@ void Enemy::deal_dmg(int dmg) {
   }
 }
 
-int Enemy::get_hp() { return hp_; }
+int Enemy::get_hp() const { return hp_; }
 
-int Enemy::get_max_hp() { return max_hp_; }
+int Enemy::get_max_hp() const { return max_hp_; }
 
 void Enemy::heal(int heal) {
+  if (heal <= 0) return;
   int temp;
   temp = heal + hp_;
   if (!is_alive_) {
@@ -54,14 +56,17 @@ void Enemy::heal(int heal) {
   }
 }
 
-int Enemy::get_difficulty() { return difficulty_; }
+int Enemy::get_difficulty() const { return difficulty_; }
 
-int Enemy::get_level() { return level_; }
+int Enemy::get_level() const { return level_; }
 
-void Enemy::add_shield(int shield) { shield_ = shield_ + shield; }
+void Enemy::add_shield(int shield) {
+  if (shield <= 0) return;
+  shield_ = shield_ + shield;
+}
 
 void Enemy::clear_shield() { shield_ = 0; }
 
-int Enemy::get_shield() { return shield_; }
+int Enemy::get_shield() const { return shield_; }
 
-bool Enemy::is_alive() { return is_alive_; }
+bool Enemy::is_alive() const { return is_alive_; }

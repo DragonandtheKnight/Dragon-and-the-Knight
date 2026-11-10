@@ -25,16 +25,16 @@ class Enemy {
         std::uint32_t seed);
   virtual ~Enemy() = default;
 
-  Enemy_type get_name();
+  Enemy_type get_name() const;
   void deal_dmg(int dmg);
-  int get_hp();
-  int get_max_hp();
+  int get_hp() const;
+  int get_max_hp() const;
   void heal(int heal);
-  int get_difficulty();
-  int get_level();
+  int get_difficulty() const;
+  int get_level() const;
   void add_shield(int shield);
   void clear_shield();
-  int get_shield();
-  bool is_alive();
+  int get_shield() const;
+  bool is_alive() const;
   virtual Enemy_skill calMove() = 0;
 };
