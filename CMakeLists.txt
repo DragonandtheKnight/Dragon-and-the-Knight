@@ -19,10 +19,10 @@ target_sources(dragon_knight_game
 )
 
 add_library(card
-    src/card/Card.cc
-    src/card/Card.h
-    src/card/CardRarity.h
-    src/card/CardType.h
+    src/card/card.cc
+    src/card/card.h
+    src/card/card_rarity.h
+    src/card/card_type.h
     src/card/card_effect.h
     src/card/effect_context.h
 )

@@ -8,9 +8,9 @@
 #include <utility>
 #include <vector>
 
-#include "card/Card.h"
-#include "card/CardRarity.h"
-#include "card/CardType.h"
+#include "card/card.h"
+#include "card/card_rarity.h"
+#include "card/card_type.h"
 #include "gtest/gtest.h"
 
 // TDD contract assumptions for the unfinished Deck interface:
@@ -24,7 +24,7 @@
 // These are test fixtures, not proposed gameplay cards.
 Card MakeDeckTestCard(int id) {
   return Card("Fixture " + std::to_string(id),
-              "Description " + std::to_string(id), CardRarity::C,
+              "Description " + std::to_string(id), CardRarity::kCommon,
               CardType::kSpecial, id, id + 10);
 }
 
@@ -34,8 +34,8 @@ using CardMetadata =
 std::vector<CardMetadata> GetCardMetadata(const std::vector<Card>& cards) {
   std::vector<CardMetadata> result;
   for (const Card& card : cards) {
-    result.emplace_back(card.getName(), card.getDescription(), card.getRarity(),
-                        card.getType(), card.getCost(), card.getValue());
+    result.emplace_back(card.GetName(), card.GetDescription(), card.GetRarity(),
+                        card.GetType(), card.GetCost(), card.GetValue());
   }
   return result;
 }

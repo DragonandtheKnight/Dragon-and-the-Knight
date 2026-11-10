@@ -1,3 +1,5 @@
+#include "card/card.h"
+
 #include <algorithm>
 #include <memory>
 #include <stdexcept>
@@ -5,10 +7,9 @@
 #include <utility>
 #include <vector>
 
-#include "card/Card.h"
-#include "card/CardRarity.h"
-#include "card/CardType.h"
 #include "card/card_effect.h"
+#include "card/card_rarity.h"
+#include "card/card_type.h"
 #include "card/effect_context.h"
 #include "gtest/gtest.h"
 
@@ -25,12 +26,12 @@ class RecordingEffect : public CardEffect {
         clones_(clones),
         expected_context_(expected_context) {}
 
-  void apply(EffectContext& context) const override {
+  void Apply(EffectContext& context) const override {
     EXPECT_EQ(&context, &expected_context_);
     calls_.emplace_back(id_, ++applications_);
   }
 
-  std::unique_ptr<CardEffect> clone() const override {
+  std::unique_ptr<CardEffect> Clone() const override {
     ++clones_;
     return std::make_unique<RecordingEffect>(*this);
   }
@@ -45,9 +46,9 @@ class RecordingEffect : public CardEffect {
 
 class FailingCloneEffect : public CardEffect {
  public:
-  void apply(EffectContext&) const override {}
+  void Apply(EffectContext&) const override {}
 
-  std::unique_ptr<CardEffect> clone() const override {
+  std::unique_ptr<CardEffect> Clone() const override {
     throw std::runtime_error("test clone failure");
   }
 };
@@ -56,9 +57,9 @@ class DestructionEffect : public CardEffect {
  public:
   explicit DestructionEffect(int& destructions) : destructions_(destructions) {}
   ~DestructionEffect() override { ++destructions_; }
-  void apply(EffectContext&) const override {}
+  void Apply(EffectContext&) const override {}
 
-  std::unique_ptr<CardEffect> clone() const override {
+  std::unique_ptr<CardEffect> Clone() const override {
     return std::make_unique<DestructionEffect>(destructions_);
   }
 
@@ -69,17 +70,17 @@ class DestructionEffect : public CardEffect {
 class CardTest : public ::testing::Test {
  protected:
   void AddRecordingEffect(Card& card, int id) {
-    card.addEffect(
+    card.AddEffect(
         std::make_unique<RecordingEffect>(id, calls_, clones_, context_));
   }
 
   void ExpectMetadataEqual(const Card& actual, const Card& expected) {
-    EXPECT_EQ(actual.getName(), expected.getName());
-    EXPECT_EQ(actual.getDescription(), expected.getDescription());
-    EXPECT_EQ(actual.getRarity(), expected.getRarity());
-    EXPECT_EQ(actual.getType(), expected.getType());
-    EXPECT_EQ(actual.getCost(), expected.getCost());
-    EXPECT_EQ(actual.getValue(), expected.getValue());
+    EXPECT_EQ(actual.GetName(), expected.GetName());
+    EXPECT_EQ(actual.GetDescription(), expected.GetDescription());
+    EXPECT_EQ(actual.GetRarity(), expected.GetRarity());
+    EXPECT_EQ(actual.GetType(), expected.GetType());
+    EXPECT_EQ(actual.GetCost(), expected.GetCost());
+    EXPECT_EQ(actual.GetValue(), expected.GetValue());
   }
 
   EffectCalls calls_;
@@ -87,44 +88,45 @@ class CardTest : public ::testing::Test {
   EffectContext context_;
   Card card_{"Test card",
              "Metadata fixture",
-             CardRarity::VR,
+             CardRarity::kVeryRare,
              CardType::kSpecial,
              3,
              7};
 };
 
 TEST_F(CardTest, ConstructorPreservesMetadata) {
-  EXPECT_EQ(card_.getName(), "Test card");
-  EXPECT_EQ(card_.getDescription(), "Metadata fixture");
-  EXPECT_EQ(card_.getRarity(), CardRarity::VR);
-  EXPECT_EQ(card_.getValue(), 7);
+  EXPECT_EQ(card_.GetName(), "Test card");
+  EXPECT_EQ(card_.GetDescription(), "Metadata fixture");
+  EXPECT_EQ(card_.GetRarity(), CardRarity::kVeryRare);
+  EXPECT_EQ(card_.GetValue(), 7);
 }
 
 TEST_F(CardTest, PreservesPrimaryTypeAndApCost) {
   for (CardType type : {CardType::kAttack, CardType::kDefense, CardType::kHeal,
                         CardType::kSpecial}) {
-    Card card("Type fixture", "", CardRarity::C, type, 2, 0);
-    EXPECT_EQ(card.getType(), type);
-    EXPECT_EQ(card.getCost(), 2);
+    Card card("Type fixture", "", CardRarity::kCommon, type, 2, 0);
+    EXPECT_EQ(card.GetType(), type);
+    EXPECT_EQ(card.GetCost(), 2);
   }
-  Card free_card("Zero cost fixture", "", CardRarity::R, CardType::kHeal, 0, 0);
-  EXPECT_EQ(free_card.getCost(), 0);
+  Card free_card("Zero cost fixture", "", CardRarity::kRare, CardType::kHeal, 0,
+                 0);
+  EXPECT_EQ(free_card.GetCost(), 0);
 }
 
 TEST_F(CardTest, EmptyCardHasNoImplicitEffects) {
-  EXPECT_NO_THROW(card_.applyEffect(context_));
+  EXPECT_NO_THROW(card_.ApplyEffect(context_));
   EXPECT_TRUE(calls_.empty());
 }
 
 TEST_F(CardTest, AddingOneEffectTransfersOwnershipAndDispatchesIt) {
   auto effect = std::make_unique<RecordingEffect>(1, calls_, clones_, context_);
-  card_.addEffect(std::move(effect));
+  card_.AddEffect(std::move(effect));
   EXPECT_EQ(effect, nullptr);
   EXPECT_TRUE(calls_.empty());
   EXPECT_EQ(clones_, 0);
 
   const Card& card = card_;
-  card.applyEffect(context_);
+  card.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}}));
 }
 
@@ -134,8 +136,8 @@ TEST_F(CardTest, MultipleEffectsExecuteInInsertionOrderOnEveryApplication) {
   AddRecordingEffect(card_, 2);
   EXPECT_TRUE(calls_.empty());
 
-  card_.applyEffect(context_);
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
+  card_.ApplyEffect(context_);
 
   EXPECT_EQ(calls_,
             (EffectCalls{{3, 1}, {1, 1}, {2, 1}, {3, 2}, {1, 2}, {2, 2}}));
@@ -144,43 +146,44 @@ TEST_F(CardTest, MultipleEffectsExecuteInInsertionOrderOnEveryApplication) {
 
 TEST_F(CardTest, NullEffectIsRejectedWithoutChangingExistingEffects) {
   AddRecordingEffect(card_, 1);
-  EXPECT_THROW(card_.addEffect(nullptr), std::invalid_argument);
+  EXPECT_THROW(card_.AddEffect(nullptr), std::invalid_argument);
 
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}}));
 }
 
 TEST_F(CardTest, CopyConstructorClonesStateIntoIndependentEffects) {
   AddRecordingEffect(card_, 1);
   AddRecordingEffect(card_, 2);
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   calls_.clear();
 
   Card copy(card_);
   ExpectMetadataEqual(copy, card_);
   EXPECT_EQ(clones_, 2);
 
-  copy.applyEffect(context_);
-  card_.applyEffect(context_);
+  copy.ApplyEffect(context_);
+  card_.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 2}, {2, 2}, {1, 2}, {2, 2}}));
 }
 
 TEST_F(CardTest, CopyRemainsUsableAfterOriginalIsDestroyed) {
   Card copy = [this]() {
-    Card original("Scoped fixture", "", CardRarity::C, CardType::kAttack, 1, 0);
+    Card original("Scoped fixture", "", CardRarity::kCommon, CardType::kAttack,
+                  1, 0);
     AddRecordingEffect(original, 1);
     return Card(original);
   }();
 
   EXPECT_EQ(clones_, 1);
-  copy.applyEffect(context_);
+  copy.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}}));
 }
 
 TEST_F(CardTest, CopyAssignmentReplacesMetadataAndDeepCopiesEffects) {
   AddRecordingEffect(card_, 1);
   AddRecordingEffect(card_, 2);
-  Card assigned("Old fixture", "Old description", CardRarity::E,
+  Card assigned("Old fixture", "Old description", CardRarity::kEpic,
                 CardType::kDefense, 1, 9);
   AddRecordingEffect(assigned, 9);
 
@@ -188,19 +191,19 @@ TEST_F(CardTest, CopyAssignmentReplacesMetadataAndDeepCopiesEffects) {
   ExpectMetadataEqual(assigned, card_);
   EXPECT_EQ(clones_, 2);
 
-  assigned.applyEffect(context_);
-  card_.applyEffect(context_);
+  assigned.ApplyEffect(context_);
+  card_.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}, {2, 1}, {1, 1}, {2, 1}}));
 }
 
 TEST_F(CardTest, SelfCopyAssignmentPreservesEffectsAndState) {
   AddRecordingEffect(card_, 1);
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   const Card& same_card = card_;
 
   card_ = same_card;
 
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}, {1, 2}}));
   EXPECT_EQ(clones_, 0);
 }
@@ -212,15 +215,15 @@ TEST_F(CardTest, CopyingAnEmptyCardClearsDestinationEffects) {
 
   card_ = empty_copy;
 
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   EXPECT_TRUE(calls_.empty());
   EXPECT_EQ(clones_, 0);
 }
 
 TEST_F(CardTest, FailedCopyAssignmentLeavesDestinationUnchanged) {
   AddRecordingEffect(card_, 1);
-  card_.addEffect(std::make_unique<FailingCloneEffect>());
-  Card destination("Original fixture", "Keep description", CardRarity::R,
+  card_.AddEffect(std::make_unique<FailingCloneEffect>());
+  Card destination("Original fixture", "Keep description", CardRarity::kRare,
                    CardType::kDefense, 1, 4);
   const Card expected_metadata(destination);
   AddRecordingEffect(destination, 9);
@@ -228,7 +231,7 @@ TEST_F(CardTest, FailedCopyAssignmentLeavesDestinationUnchanged) {
   EXPECT_THROW(destination = card_, std::runtime_error);
 
   ExpectMetadataEqual(destination, expected_metadata);
-  destination.applyEffect(context_);
+  destination.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{9, 1}}));
 }
 
@@ -237,13 +240,13 @@ TEST_F(CardTest, MoveConstructorTransfersEffectsWithoutCloning) {
   const Card expected_metadata(card_);
   AddRecordingEffect(card_, 1);
   AddRecordingEffect(card_, 2);
-  card_.applyEffect(context_);
+  card_.ApplyEffect(context_);
   calls_.clear();
 
   Card moved(std::move(card_));
 
   ExpectMetadataEqual(moved, expected_metadata);
-  moved.applyEffect(context_);
+  moved.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 2}, {2, 2}}));
   EXPECT_EQ(clones_, 0);
   // A moved-from card remains assignable; its old metadata is unspecified.
@@ -255,13 +258,13 @@ TEST_F(CardTest, MoveAssignmentReplacesEffectsWithoutCloning) {
   static_assert(std::is_nothrow_move_assignable_v<Card>);
   const Card expected_metadata(card_);
   AddRecordingEffect(card_, 1);
-  Card moved("Old fixture", "", CardRarity::C, CardType::kAttack, 0, 0);
+  Card moved("Old fixture", "", CardRarity::kCommon, CardType::kAttack, 0, 0);
   AddRecordingEffect(moved, 9);
 
   EXPECT_EQ(&(moved = std::move(card_)), &moved);
 
   ExpectMetadataEqual(moved, expected_metadata);
-  moved.applyEffect(context_);
+  moved.ApplyEffect(context_);
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}}));
   EXPECT_EQ(clones_, 0);
 }
@@ -272,9 +275,9 @@ TEST_F(CardTest, VectorOfCardsCanCopyCardsByValue) {
   cards.push_back(card_);
   cards.push_back(card_);
 
-  cards[0].applyEffect(context_);
-  cards[1].applyEffect(context_);
-  card_.applyEffect(context_);
+  cards[0].ApplyEffect(context_);
+  cards[1].ApplyEffect(context_);
+  card_.ApplyEffect(context_);
 
   EXPECT_EQ(calls_, (EffectCalls{{1, 1}, {1, 1}, {1, 1}}));
   EXPECT_EQ(clones_, 2);
@@ -284,7 +287,7 @@ TEST_F(CardTest, OwnedEffectsAreDestroyedWithTheirCards) {
   int destructions = 0;
   {
     Card owner(card_);
-    owner.addEffect(std::make_unique<DestructionEffect>(destructions));
+    owner.AddEffect(std::make_unique<DestructionEffect>(destructions));
     {
       Card copy(owner);
       EXPECT_EQ(destructions, 0);

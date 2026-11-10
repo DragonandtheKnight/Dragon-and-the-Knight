@@ -1,7 +1,7 @@
 #include "card/deck.h"
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <utility>
 #include <vector>
 

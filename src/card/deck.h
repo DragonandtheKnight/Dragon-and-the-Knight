@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "card/Card.h"
+#include "card/card.h"
 #include "game/rng.h"
 
 class Deck {
