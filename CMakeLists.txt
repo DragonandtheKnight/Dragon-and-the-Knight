@@ -10,12 +10,26 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(dragon_knight_game STATIC)
 target_sources(dragon_knight_game
     PRIVATE
+        src/enemy/enemy.cc
+        src/enemy/goblin.cc
+        src/enemy/slime.cc
         src/game/rng.cc
+        src/enemy/shaman.cc
+        src/enemy/giant.cc
+        src/enemy/dragon.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
     FILES
         src/game/rng.h
+        src/enemy/enemy.h
+        src/enemy/enemy_skill.h
+        src/enemy/enemy_type.h
+        src/enemy/goblin.h
+        src/enemy/slime.h
+        src/enemy/shaman.h
+        src/enemy/giant.h
+        src/enemy/dragon.h
 )
 
 add_library(card
@@ -45,6 +59,12 @@ include(GoogleTest)
 
 add_executable(dragon_knight_game_tests
     test/game/rng_test.cc
+    test/enemy/enemy_test.cc
+    test/enemy/goblin_test.cc
+    test/enemy/slime_test.cc
+    test/enemy/shaman_test.cc
+    test/enemy/giant_test.cc
+    test/enemy/dragon_test.cc
 )
 target_link_libraries(dragon_knight_game_tests PRIVATE
     dragon_knight_game
