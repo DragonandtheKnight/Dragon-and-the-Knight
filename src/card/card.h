@@ -4,24 +4,15 @@
 #include <string>
 #include <vector>
 
-#include "card/CardRarity.h"
-#include "card/CardType.h"
 #include "card/card_effect.h"
+#include "card/card_rarity.h"
+#include "card/card_type.h"
 
 class Player;
 class Enemy;
 struct EffectContext;
 
 class Card {
- private:
-  std::string name;
-  std::string description;
-  CardRarity rarity;
-  CardType type;
-  int cost;
-  int value;
-  std::vector<std::unique_ptr<CardEffect>> effects;
-
  public:
   Card(std::string name, std::string description, CardRarity rarity,
        CardType type, int cost, int value);
@@ -31,19 +22,28 @@ class Card {
   Card& operator=(Card&& other) noexcept = default;
   ~Card() = default;
 
-  std::string getName() const;
-  std::string getDescription() const;
-  CardRarity getRarity() const;
-  int getCost() const;
-  CardType getType() const;
-  int getValue() const;
+  std::string GetName() const;
+  std::string GetDescription() const;
+  CardRarity GetRarity() const;
+  int GetCost() const;
+  CardType GetType() const;
+  int GetValue() const;
 
   // Takes ownership; throws std::invalid_argument for a null effect.
-  void addEffect(std::unique_ptr<CardEffect> effect);
+  void AddEffect(std::unique_ptr<CardEffect> effect);
   // Executes attached effects in insertion order. Type/value remain metadata;
   // they do not create implicit effects or spend AP.
-  void applyEffect(EffectContext& context) const;
+  void ApplyEffect(EffectContext& context) const;
   // Compatibility overload: supplies only player and target. Effects requiring
   // the enemy collection or deck must use the context overload instead.
-  void applyEffect(Player& player, Enemy& enemy) const;
+  void ApplyEffect(Player& player, Enemy& enemy) const;
+
+ private:
+  std::string name_;
+  std::string description_;
+  CardRarity rarity_;
+  CardType type_;
+  int cost_;
+  int value_;
+  std::vector<std::unique_ptr<CardEffect>> effects_;
 };
