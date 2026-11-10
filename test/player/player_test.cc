@@ -16,7 +16,7 @@ TEST(PlayerConstructorTest, InitializesPlayerCorrectly) {
   EXPECT_EQ(player.GetHp(), 100);
   EXPECT_EQ(player.GetMaxHp(), 100);
   EXPECT_EQ(player.GetBlock(), 0);
-  EXPECT_EQ(player.GetEnergy(), 0);
+  EXPECT_EQ(player.GetMaxEnergy(), 10);
   EXPECT_EQ(player.GetGold(), 0);
   EXPECT_TRUE(player.IsAlive());
 }
@@ -170,21 +170,12 @@ TEST(PlayerEnergyTest, MaxEnergyStartsAtTen) {
   EXPECT_EQ(player.GetMaxEnergy(), 10);
 }
 
-TEST(PlayerEnergyTest, ResetEnergySetsEnergyToZero) {
-  Player player("Knight", 100, kDeckSeed);
-
-  player.ResetEnergy();
-
-  EXPECT_EQ(player.GetEnergy(), 0);
-}
-
 TEST(PlayerEnergyTest, IncreaseMaxEnergyRaisesMaxEnergy) {
   Player player("Knight", 100, kDeckSeed);
 
   player.IncreaseMaxEnergy(2);
 
   EXPECT_EQ(player.GetMaxEnergy(), 12);
-  EXPECT_EQ(player.GetEnergy(), 0);
 }
 
 TEST(PlayerEnergyTest, NonPositiveMaxEnergyIncreaseIsIgnored) {
@@ -213,4 +204,51 @@ TEST(PlayerAliveTest, DeadPlayerCannotBeHealed) {
 
   EXPECT_FALSE(player.IsAlive());
   EXPECT_EQ(player.GetHp(), 0);
+}
+
+TEST(PlayerBlockTest, ResetBlockClearsBlock) {
+  Player player("Knight", 100, kDeckSeed);
+  player.AddBlock(20);
+
+  player.ResetBlock();
+
+  EXPECT_EQ(player.GetBlock(), 0);
+}
+
+TEST(PlayerMaxHpTest, IncreaseMaxHpRaisesBothHpValues) {
+  Player player("Knight", 100, kDeckSeed);
+  player.TakeDamage(30);
+
+  player.IncreaseMaxHp(20);
+
+  EXPECT_EQ(player.GetMaxHp(), 120);
+  EXPECT_EQ(player.GetHp(), 90);
+}
+
+TEST(PlayerMaxHpTest, DeadPlayerCannotBeRevived) {
+  Player player("Knight", 100, kDeckSeed);
+  player.TakeDamage(100);
+
+  player.IncreaseMaxHp(20);
+
+  EXPECT_EQ(player.GetHp(), 0);
+  EXPECT_FALSE(player.IsAlive());
+}
+
+TEST(PlayerEnergyTest, ReduceMaxEnergyCannotGoBelowZero) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.ReduceMaxEnergy(20);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 0);
+}
+
+TEST(PlayerGoldTest, TotalGoldIncludesSpentGold) {
+  Player player("Knight", 100, kDeckSeed);
+  player.GainGold(100);
+
+  player.SpendGold(40);
+
+  EXPECT_EQ(player.GetGold(), 60);
+  EXPECT_EQ(player.GetTotalGoldGained(), 100);
 }

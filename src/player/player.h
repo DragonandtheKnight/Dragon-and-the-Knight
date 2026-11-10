@@ -51,6 +51,7 @@ class Player {
   std::string name_;
   int hp_;
   int max_hp_;
+  bool is_alive_ = true;
   int block_ = 0;
   int max_energy_ = 10;
   int gold_ = 0;
