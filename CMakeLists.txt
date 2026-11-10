@@ -32,6 +32,16 @@ target_sources(dragon_knight_game
         src/enemy/dragon.h
 )
 
+add_library(card
+    src/card/card.cc
+    src/card/card.h
+    src/card/card_rarity.h
+    src/card/card_type.h
+    src/card/card_effect.h
+    src/card/effect_context.h
+)
+target_include_directories(card PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 enable_testing()
 
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
@@ -55,3 +65,7 @@ target_link_libraries(dragon_knight_game_tests PRIVATE
 # PRE_TEST lists the tests when ctest runs, so a test binary that crashes on
 # start fails the test run instead of the build.
 gtest_discover_tests(dragon_knight_game_tests DISCOVERY_MODE PRE_TEST)
+
+add_executable(card_tests test/card/card_test.cc)
+target_link_libraries(card_tests PRIVATE card GTest::gtest_main)
+gtest_discover_tests(card_tests TEST_PREFIX "card." DISCOVERY_MODE PRE_TEST)
