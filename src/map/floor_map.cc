@@ -1,52 +1,79 @@
+#include "map/floor_map.h"
+
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
-#include "level/Level.h"
-#include "level/LevelType.h"
-#include "map/FloorMap.h"
+#include "level/level.h"
+#include "level/level_type.h"
 
-Level* FloorMap::getCurrentLevel() const {
-  if (currentLevelId < 0 || currentLevelId >= static_cast<int>(levels.size())) {
-    return nullptr;
+void FloorMap::GenerateMap(const LevelFactory& make_level) {
+  if (!make_level) {
+    throw std::invalid_argument("The level factory is empty");
   }
-  return levels[currentLevelId].get();
-}
 
-void FloorMap::generateMap(const LevelFactory& make_level) {
+  constexpr int kBossId = 7;
   std::vector<std::unique_ptr<Level>> new_levels;
-  for (int id = 0; id < 4; ++id) {
-    auto level = make_level(id, LevelType::Combat, id != 0);
+  for (int id = 0; id <= kBossId; ++id) {
+    auto level = make_level(id, LevelType::kCombat, id == kBossId);
     if (level == nullptr) {
       throw std::invalid_argument("The level factory returned a null level");
     }
     new_levels.push_back(std::move(level));
   }
 
-  new_levels[0]->addConnection(1);
-  new_levels[0]->addConnection(2);
-  new_levels[0]->addConnection(3);
-  levels = std::move(new_levels);
-  currentLevelId = 0;
+  for (int entrance = 1; entrance <= 3; ++entrance) {
+    const int next = entrance + 3;
+    new_levels[0]->AddConnection(entrance);
+    new_levels[entrance]->AddConnection(next);
+    new_levels[next]->AddConnection(kBossId);
+  }
+
+  levels_ = std::move(new_levels);
+  current_level_id_ = 0;
 }
 
-std::vector<int> FloorMap::getAvailablePaths() const {
-  const Level* current = getCurrentLevel();
+void FloorMap::DisplayPaths() const {
+  const auto paths = GetAvailablePaths();
+  if (paths.empty()) {
+    std::cout << "No available paths\n";
+    return;
+  }
+
+  std::cout << "Available paths:";
+  for (int id : paths) {
+    std::cout << ' ' << id;
+  }
+  std::cout << '\n';
+}
+
+std::vector<int> FloorMap::GetAvailablePaths() const {
+  const Level* current = GetCurrentLevel();
   if (current == nullptr) {
     return {};
   }
-  return current->getConnections();
+  return current->GetConnections();
 }
 
-bool FloorMap::moveTo(int id) {
-  if (id < 0 || id >= static_cast<int>(levels.size())) {
+bool FloorMap::MoveTo(int id) {
+  if (id < 0 || id >= static_cast<int>(levels_.size())) {
     return false;
   }
-  const Level* current = getCurrentLevel();
-  if (current == nullptr || !current->isConnectedTo(id)) {
+
+  const Level* current = GetCurrentLevel();
+  if (current == nullptr || !current->IsConnectedTo(id)) {
     return false;
   }
-  currentLevelId = id;
+  current_level_id_ = id;
   return true;
+}
+
+Level* FloorMap::GetCurrentLevel() const {
+  if (current_level_id_ < 0 ||
+      current_level_id_ >= static_cast<int>(levels_.size())) {
+    return nullptr;
+  }
+  return levels_[current_level_id_].get();
 }
