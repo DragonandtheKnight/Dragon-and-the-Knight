@@ -1,6 +1,8 @@
 #pragma once
 
 enum class EnemyType {
+  kEmpty,
+
   kGiantBaby,
   kGiant,
   kGiantKing,

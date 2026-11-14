@@ -17,6 +17,7 @@ target_sources(dragon_knight_game
         src/enemy/shaman.cc
         src/enemy/giant.cc
         src/enemy/dragon.cc
+        src/enemy/empty_enemy.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
@@ -30,6 +31,7 @@ target_sources(dragon_knight_game
         src/enemy/shaman.h
         src/enemy/giant.h
         src/enemy/dragon.h
+        src/enemy/empty_enemy.h
 )
 
 add_library(card
@@ -65,6 +67,7 @@ add_executable(dragon_knight_game_tests
     test/enemy/shaman_test.cc
     test/enemy/giant_test.cc
     test/enemy/dragon_test.cc
+    test/enemy/empty_enemy_test.cc
 )
 target_link_libraries(dragon_knight_game_tests PRIVATE
     dragon_knight_game

@@ -11,7 +11,7 @@ Enemy::Enemy(EnemyType name, int max_hp, int difficulty, int level,
       difficulty_(difficulty),
       shield_(0),
       level_(level),
-      is_alive_(true) {}
+      is_alive_(max_hp > 0) {}
 
 EnemyType Enemy::GetName() const { return name_; }
 
@@ -72,3 +72,14 @@ void Enemy::ClearShield() { shield_ = 0; }
 int Enemy::GetShield() const { return shield_; }
 
 bool Enemy::IsAlive() const { return is_alive_; }
+
+bool Enemy::IsEmpty() const {
+  bool is_empty;
+  if (name_ == EnemyType::kEmpty) {
+    is_empty = true;
+    return is_empty;
+  } else {
+    is_empty = false;
+    return is_empty;
+  }
+}
