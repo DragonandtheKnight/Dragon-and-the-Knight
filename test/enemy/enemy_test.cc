@@ -293,3 +293,15 @@ TEST(EnemyTest, NegativeShieldDoesNotAmplifyTheNextHit) {
   EXPECT_EQ(enemy.GetHp(), 25);
   EXPECT_EQ(enemy.GetShield(), 0);
 }
+
+// A corpse is not a target: once hp reached zero, a late shield effect that was
+// already queued for this slot must not leave a shield bar floating over a dead
+// enemy. Before this guard the shield was added to the corpse and the next hit
+// was absorbed by it.
+TEST(EnemyTest, ADefeatedEnemyIgnoresShield) {
+  StubEnemy enemy(EnemyType::kSlime, 30, 1, 1, 7);
+  enemy.TakeDamage(30);
+  enemy.AddShield(10);
+  EXPECT_EQ(enemy.GetShield(), 0);
+  EXPECT_FALSE(enemy.IsAlive());
+}
