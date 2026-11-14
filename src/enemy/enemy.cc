@@ -61,6 +61,9 @@ int Enemy::GetLevel() const { return level_; }
 
 void Enemy::AddShield(int shield) {
   if (shield <= 0) return;
+  if (!is_alive_) {
+    return;
+  }
   shield_ = shield_ + shield;
 }
 
