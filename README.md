@@ -8,14 +8,14 @@ The game takes place in a fantasy world. The player can travel through different
 The main goal is to follow the storyline, become stronger, and defeat the final boss, a dragon.
 Your project description should summarize the project you are proposing. Be sure to include:
 
-* Why is it important or interesting to you?  
-  
-  * It is a game, and I have never made a game before.  
-  * Compared to other types of projects, we find RPG games more interesting and think we would have more fun developing one. Since I have never designed or developed a game before, I am very interested in this project.  
-* What languages/tools/technologies do you plan to use? (This list may change over the course of the project)  
+* Why is it important or interesting to you?
+
+  * It is a game, and I have never made a game before.
+  * Compared to other types of projects, we find RPG games more interesting and think we would have more fun developing one. Since I have never designed or developed a game before, I am very interested in this project.
+* What languages/tools/technologies do you plan to use? (This list may change over the course of the project)
   - languages C++
   - TUI Framwork: [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (FTXUI is a modern C++ library for building interactive terminals.)
-* What will be the input/output of your project?  
+* What will be the input/output of your project?
 
   * User's click and type will be the input, output will be shown in the terminal.
 * What are the features that the project provides?
@@ -51,7 +51,7 @@ Please check online version by following URL ⬇️
 
 The Game class controls the main game process including starting the game, running the game, moving to the next floor, and ending the game. The FloorMap class manages the map and the paths that players can choose. The Level class is an abstract base class, and Combat, Shop, Rest, Event, and Entertainment inherit from it. Each level has different functions. For example, players can fight monsters in Combat, buy cards in Shop, and recover HP in Rest.
 
-The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddBlock(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
+The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddShield(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
 
 The Card class stores information about each card including its name, type, cost, rarity, and effect value. The Deck class manages the player's cards including drawing, shuffling, and discarding cards. The Battle class controls the turn based combat system. It manages player turns, enemy turns, playing cards, and checking whether the battle has ended.
 

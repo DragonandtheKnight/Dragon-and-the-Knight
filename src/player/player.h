@@ -15,9 +15,9 @@ class Player {
   // Restores HP up to the maximum. Does nothing if the player is dead or
   // amount is below 1.
   void Heal(int amount);
-  void AddBlock(int amount);
+  void AddShield(int amount);
   // Removes all block. Battle calls it when block expires.
-  void ResetBlock();
+  void ResetShield();
   // Raises maximum HP and current HP by amount. Amounts below 1 do nothing.
   void IncreaseMaxHp(int amount);
   bool IsAlive() const;
@@ -37,7 +37,7 @@ class Player {
   const std::string& GetName() const;
   int GetHp() const;
   int GetMaxHp() const;
-  int GetBlock() const;
+  int GetShield() const;
   int GetMaxEnergy() const;
   int GetGold() const;
   // All gold gained this run, including gold already spent.
@@ -52,7 +52,7 @@ class Player {
   int hp_;
   int max_hp_;
   bool is_alive_ = true;
-  int block_ = 0;
+  int shield_ = 0;
   int max_energy_ = 10;
   int gold_ = 0;
   int total_gold_gained_ = 0;

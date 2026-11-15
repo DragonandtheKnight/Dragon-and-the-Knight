@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "map/FloorMap.h"
+#include "map/floor_map.h"
 #include "player/player.h"
 
 class Game {

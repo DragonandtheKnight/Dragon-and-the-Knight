@@ -60,10 +60,32 @@ target_sources(player
 )
 target_link_libraries(player PUBLIC deck)
 
+# Level and map library
+add_library(level_map STATIC
+    src/level/level.cc
+    src/level/level.h
+    src/level/level_type.h
+
+    src/level/shop.cc
+    src/level/shop.h
+    src/level/rest.cc
+    src/level/rest.h
+    src/level/event.cc
+    src/level/event.h
+    src/level/entertainment.cc
+    src/level/entertainment.h
+
+    src/map/floor_map.cc
+    src/map/floor_map.h
+)
+
+target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(level_map PUBLIC player)
+
 # Main executable
 # Game/Player integration is still unfinished.
 add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL src/main.cpp)
-target_link_libraries(dragon_and_the_knight PRIVATE player)
+target_link_libraries(dragon_and_the_knight PRIVATE player level_map)
 
 enable_testing()
 
@@ -113,3 +135,28 @@ gtest_discover_tests(card_tests TEST_PREFIX "card." DISCOVERY_MODE PRE_TEST)
 add_executable(deck_tests test/card/deck_test.cc)
 target_link_libraries(deck_tests PRIVATE deck GTest::gtest_main)
 gtest_discover_tests(deck_tests TEST_PREFIX "deck." DISCOVERY_MODE PRE_TEST)
+
+# Level and map tests
+add_executable(level_map_tests test/map/floor_map_test.cc)
+target_link_libraries(level_map_tests PRIVATE level_map GTest::gtest_main)
+gtest_discover_tests(level_map_tests DISCOVERY_MODE PRE_TEST)
+
+# Non-combat level tests
+add_executable(non_combat_level_tests
+    test/level/shop_test.cc
+    test/level/rest_test.cc
+    test/level/event_test.cc
+    test/level/entertainment_test.cc
+)
+
+target_link_libraries(non_combat_level_tests PRIVATE
+    level_map
+    player
+    GTest::gtest_main
+)
+
+gtest_discover_tests(
+    non_combat_level_tests
+    TEST_PREFIX "non_combat."
+    DISCOVERY_MODE PRE_TEST
+)
