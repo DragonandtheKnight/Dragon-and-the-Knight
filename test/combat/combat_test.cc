@@ -17,14 +17,14 @@
 namespace {
 constexpr std::uint32_t kSeed = 42;
 
-Card MakeCard() {
+Card MakeCard(int cost = 1) {
   return Card("Test card", "A card for tests", static_cast<CardRarity>(0),
-              static_cast<CardType>(0), 1, 5);
+              static_cast<CardType>(0), cost, 5);
 }
 
-void FillDeck(Player& player, int count) {
+void FillDeck(Player& player, int count, int cost = 1) {
   for (int i = 0; i < count; ++i) {
-    player.GetDeck().AddCard(MakeCard());
+    player.GetDeck().AddCard(MakeCard(cost));
   }
 }
 }  // namespace
@@ -170,4 +170,137 @@ TEST(CombatStartBattleTest, GrantsTheDefaultApOnTheFirstRound) {
 
   EXPECT_EQ(combat.GetCurrentAp(), Combat::kDefaultApPerTurn);
   EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
+}
+
+TEST(CombatUseCardTest, PlaysACardOnThePlayerAndSpendsAp) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const int cost = player.GetDeck().GetHand()[0].GetCost();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_TRUE(combat.UseCard(0, -1));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before - cost);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before - 1);
+}
+
+TEST(CombatUseCardTest, PlaysACardOnALivingEnemy) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const int cost = player.GetDeck().GetHand()[0].GetCost();
+
+  EXPECT_TRUE(combat.UseCard(0, 0));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before - cost);
+  EXPECT_TRUE(goblin.IsAlive());
+}
+
+TEST(CombatUseCardTest, RejectsAnInvalidCardIndex) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_FALSE(combat.UseCard(-1, -1));
+  EXPECT_FALSE(combat.UseCard(99, -1));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
+}
+
+TEST(CombatUseCardTest, RejectsACardThatCostsMoreThanTheCurrentAp) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10, 5);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_FALSE(combat.UseCard(0, -1));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
+}
+
+TEST(CombatUseCardTest, RejectsAnEmptyTargetSlot) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_FALSE(combat.UseCard(0, 1));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
+}
+
+TEST(CombatUseCardTest, RejectsADeadTargetSlot) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  goblin.TakeDamage(1000);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_FALSE(combat.UseCard(0, 0));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
+}
+
+TEST(CombatUseCardTest, RejectsATargetSlotOutOfRange) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 10);
+  combat.StartBattle();
+
+  const int ap_before = combat.GetCurrentAp();
+  const std::size_t hand_before = player.GetDeck().GetHand().size();
+
+  EXPECT_FALSE(combat.UseCard(0, 4));
+  EXPECT_FALSE(combat.UseCard(0, -2));
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before);
+  EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
 }
