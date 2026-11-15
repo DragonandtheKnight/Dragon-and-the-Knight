@@ -58,7 +58,7 @@ void Event::ApplyChoice(Player& player, int choice) {
     if (choice == 0) {
       player.IncreaseMaxHp(10);
     } else {
-      player.AddBlock(10);
+      player.AddShield(10);
     }
   } else {
     if (choice == 0) {

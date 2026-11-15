@@ -15,7 +15,7 @@ TEST(PlayerConstructorTest, InitializesPlayerCorrectly) {
   EXPECT_EQ(player.GetName(), "Knight");
   EXPECT_EQ(player.GetHp(), 100);
   EXPECT_EQ(player.GetMaxHp(), 100);
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
   EXPECT_EQ(player.GetMaxEnergy(), 10);
   EXPECT_EQ(player.GetGold(), 0);
   EXPECT_TRUE(player.IsAlive());
@@ -45,24 +45,24 @@ TEST(PlayerDamageTest, DamageReducesHp) {
   EXPECT_EQ(player.GetHp(), 70);
 }
 
-TEST(PlayerDamageTest, BlockAbsorbsDamageFirst) {
+TEST(PlayerDamageTest, ShieldAbsorbsDamageFirst) {
   Player player("Knight", 100, kDeckSeed);
-  player.AddBlock(20);
+  player.AddShield(20);
 
   player.TakeDamage(30);
 
   EXPECT_EQ(player.GetHp(), 90);
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
 }
 
-TEST(PlayerDamageTest, BlockCanAbsorbAllDamage) {
+TEST(PlayerDamageTest, ShieldCanAbsorbAllDamage) {
   Player player("Knight", 100, kDeckSeed);
-  player.AddBlock(20);
+  player.AddShield(20);
 
   player.TakeDamage(10);
 
   EXPECT_EQ(player.GetHp(), 100);
-  EXPECT_EQ(player.GetBlock(), 10);
+  EXPECT_EQ(player.GetShield(), 10);
 }
 
 TEST(PlayerDamageTest, HpCannotBeNegative) {
@@ -131,29 +131,29 @@ TEST(PlayerMaxHpTest, NonPositiveMaxHpIncreaseIsIgnored) {
 }
 
 // Block tests
-TEST(PlayerBlockTest, AddBlockIncreasesBlock) {
+TEST(PlayerShieldTest, AddShieldIncreasesBlock) {
   Player player("Knight", 100, kDeckSeed);
 
-  player.AddBlock(15);
-  player.AddBlock(5);
+  player.AddShield(15);
+  player.AddShield(5);
 
-  EXPECT_EQ(player.GetBlock(), 20);
+  EXPECT_EQ(player.GetShield(), 20);
 }
 
-TEST(PlayerBlockTest, NegativeBlockIsIgnored) {
+TEST(PlayerShieldTest, NegativeBlockIsIgnored) {
   Player player("Knight", 100, kDeckSeed);
 
-  player.AddBlock(-10);
+  player.AddShield(-10);
 
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
 }
 
-TEST(PlayerBlockTest, ResetBlockDoesNotChangeHp) {
+TEST(PlayerShieldTest, ResetShieldDoesNotChangeHp) {
   Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(30);
-  player.AddBlock(15);
+  player.AddShield(15);
 
-  player.ResetBlock();
+  player.ResetShield();
 
   EXPECT_EQ(player.GetHp(), 70);
 }
@@ -276,13 +276,13 @@ TEST(PlayerAliveTest, DeadPlayerCannotBeHealed) {
   EXPECT_EQ(player.GetHp(), 0);
 }
 
-TEST(PlayerBlockTest, ResetBlockClearsBlock) {
+TEST(PlayerShieldTest, ResetShieldClearsShield) {
   Player player("Knight", 100, kDeckSeed);
-  player.AddBlock(20);
+  player.AddShield(20);
 
-  player.ResetBlock();
+  player.ResetShield();
 
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
 }
 
 TEST(PlayerMaxHpTest, IncreaseMaxHpRaisesBothHpValues) {

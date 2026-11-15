@@ -28,7 +28,7 @@ TEST(EventTest, InvalidChoicesDoNotChangePlayer) {
   EXPECT_EQ(player.GetHp(), 80);
   EXPECT_EQ(player.GetMaxHp(), 100);
   EXPECT_EQ(player.GetGold(), 0);
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
   EXPECT_EQ(player.GetMaxEnergy(), 10);
 }
 
