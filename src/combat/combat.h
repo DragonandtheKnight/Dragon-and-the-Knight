@@ -12,7 +12,6 @@ class Combat {
   static const int kMaxEnemySlots = 4;
   static const int kHandSize = 5;
   Combat(Player& player, const std::vector<Enemy*>& slots);
-  bool UseCard(int card_index, int target_slot);
   void EndRound();
   int GetCurrentAp() const;
   int GetNextAp() const;
@@ -20,6 +19,7 @@ class Combat {
   EnemySkill GetNextAct(int slot) const;
   bool IsOver() const;
   void StartBattle();
+  bool UseCard(int card_index, int target_slot);
 
  private:
   Player& player_;
