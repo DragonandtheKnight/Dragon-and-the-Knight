@@ -84,6 +84,11 @@ add_library(level_map STATIC
 target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(level_map PUBLIC player)
 
+# Battle library
+add_library(combat STATIC src/combat/combat.cc src/combat/combat.h)
+target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(combat PUBLIC player)
+
 # Main executable
 # Game/Player integration is still unfinished.
 add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL src/main.cpp)
@@ -163,3 +168,8 @@ gtest_discover_tests(
     TEST_PREFIX "non_combat."
     DISCOVERY_MODE PRE_TEST
 )
+
+# Battle tests
+add_executable(combat_tests test/combat/combat_test.cc)
+target_link_libraries(combat_tests PRIVATE combat GTest::gtest_main)
+gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
