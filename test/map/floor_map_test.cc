@@ -64,33 +64,38 @@ TEST(FloorMapTest, DisplaysAvailablePaths) {
 }
 
 TEST(FloorMapTest, AllThreeRoutesReachTheOnlyFinalLevel) {
-  const std::array<std::array<int, 2>, 3> routes = {{{1, 4}, {2, 5}, {3, 6}}};
-  for (const auto& [entrance, next] : routes) {
-    SCOPED_TRACE(entrance);
+  const std::array<std::array<int, 6>, 3> routes = {{
+      {1, 4, 7, 10, 13, 16},
+      {2, 5, 8, 11, 14, 16},
+      {3, 6, 9, 12, 15, 16},
+  }};
+
+  auto check_route = [](const auto& route) {
+    SCOPED_TRACE(route.front());
     FloorMap map;
     map.GenerateMap(MakeTestLevel);
+
     ASSERT_NE(map.GetCurrentLevel(), nullptr);
     EXPECT_EQ(map.GetCurrentLevel()->GetId(), 0);
     EXPECT_FALSE(map.GetCurrentLevel()->IsFinalLevel());
     EXPECT_EQ(map.GetAvailablePaths(), (std::vector<int>{1, 2, 3}));
 
-    ASSERT_TRUE(map.MoveTo(entrance));
-    ASSERT_NE(map.GetCurrentLevel(), nullptr);
-    EXPECT_EQ(map.GetCurrentLevel()->GetId(), entrance);
-    EXPECT_FALSE(map.GetCurrentLevel()->IsFinalLevel());
-    EXPECT_EQ(map.GetAvailablePaths(), std::vector<int>{next});
-
-    ASSERT_TRUE(map.MoveTo(next));
-    ASSERT_NE(map.GetCurrentLevel(), nullptr);
-    EXPECT_EQ(map.GetCurrentLevel()->GetId(), next);
-    EXPECT_FALSE(map.GetCurrentLevel()->IsFinalLevel());
-    EXPECT_EQ(map.GetAvailablePaths(), std::vector<int>{7});
-
-    ASSERT_TRUE(map.MoveTo(7));
-    ASSERT_NE(map.GetCurrentLevel(), nullptr);
-    EXPECT_EQ(map.GetCurrentLevel()->GetId(), 7);
-    EXPECT_TRUE(map.GetCurrentLevel()->IsFinalLevel());
+    for (auto step = route.begin(); step != route.end(); ++step) {
+      const int destination = *step;
+      SCOPED_TRACE(destination);
+      if (step != route.begin()) {
+        EXPECT_EQ(map.GetAvailablePaths(), std::vector<int>{destination});
+      }
+      ASSERT_TRUE(map.MoveTo(destination));
+      ASSERT_NE(map.GetCurrentLevel(), nullptr);
+      EXPECT_EQ(map.GetCurrentLevel()->GetId(), destination);
+      EXPECT_EQ(map.GetCurrentLevel()->IsFinalLevel(), step + 1 == route.end());
+    }
     EXPECT_TRUE(map.GetAvailablePaths().empty());
+  };
+
+  for (const auto& route : routes) {
+    check_route(route);
   }
 }
 
@@ -100,7 +105,7 @@ TEST(FloorMapTest, RejectsInvalidAndUnconnectedMoves) {
   ASSERT_TRUE(map.MoveTo(1));
   const Level* current = map.GetCurrentLevel();
 
-  for (int id : {-1, 8, 2, 0}) {
+  for (int id : {-1, 17, 2, 0}) {
     SCOPED_TRACE(id);
     EXPECT_FALSE(map.MoveTo(id));
     EXPECT_EQ(map.GetCurrentLevel(), current);

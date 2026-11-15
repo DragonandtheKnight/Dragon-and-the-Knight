@@ -14,7 +14,7 @@ void FloorMap::GenerateMap(const LevelFactory& make_level) {
     throw std::invalid_argument("The level factory is empty");
   }
 
-  constexpr int kBossId = 7;
+  constexpr int kBossId = 16;
   std::vector<std::unique_ptr<Level>> new_levels;
   for (int id = 0; id <= kBossId; ++id) {
     auto level = make_level(id, LevelType::kCombat, id == kBossId);
@@ -24,12 +24,13 @@ void FloorMap::GenerateMap(const LevelFactory& make_level) {
     new_levels.push_back(std::move(level));
   }
 
-  for (int entrance = 1; entrance <= 3; ++entrance) {
-    const int next = entrance + 3;
-    new_levels[0]->AddConnection(entrance);
-    new_levels[entrance]->AddConnection(next);
-    new_levels[next]->AddConnection(kBossId);
+for (int entrance = 1; entrance <= 3; ++entrance) {
+  new_levels[0]->AddConnection(entrance);
+  for (int node = entrance; node < entrance + 12; node += 3) {
+    new_levels[node]->AddConnection(node + 3);
   }
+  new_levels[entrance + 12]->AddConnection(kBossId);
+}
 
   levels_ = std::move(new_levels);
   current_level_id_ = 0;
