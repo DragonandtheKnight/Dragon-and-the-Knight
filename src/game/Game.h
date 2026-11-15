@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "map/FloorMap.h"
-#include "player/Player.h"
+#include "player/player.h"
 
 class Game {
  private:
