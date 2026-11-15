@@ -2,6 +2,8 @@
 
 #include <vector>
 
+const int Combat::kDefaultApPerTurn;
+
 Combat::Combat(Player& player, const std::vector<Enemy*>& slots)
     : player_(player),
       enemies_(slots),
@@ -27,4 +29,17 @@ bool Combat::IsOver() const {
     }
   }
   return true;
+}
+
+void Combat::StartBattle() {
+  Deck& deck = player_.GetDeck();
+  deck.StartBattle();
+  deck.Shuffle();
+  deck.Draw(kHandSize);
+  int slot;
+  for (slot = 0; slot < kMaxEnemySlots; slot++) {
+    next_acts_[slot] = enemies_[slot]->CalculateMove();
+  }
+  current_ap_ = kDefaultApPerTurn;
+  next_ap_ = kDefaultApPerTurn;
 }
