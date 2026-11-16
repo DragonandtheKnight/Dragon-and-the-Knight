@@ -27,6 +27,7 @@ class Combat {
   int current_ap_;
   int next_ap_;
   std::vector<EnemySkill> next_acts_;
+  virtual Card* GetSkillCard(EnemySkill skill) const;
   void ResolveOneSkill(EnemySkill skill, int slot);
   void ResolveEnemySkills();
 };

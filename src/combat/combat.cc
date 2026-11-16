@@ -82,7 +82,21 @@ bool Combat::UseCard(int card_index, int target_slot) {
   return true;
 }
 
-void Combat::ResolveOneSkill(EnemySkill skill, int slot) {}
+Card* Combat::GetSkillCard(EnemySkill skill) const { return nullptr; }
+
+void Combat::ResolveOneSkill(EnemySkill skill, int slot) {
+  Card* card = GetSkillCard(skill);
+  if (card == nullptr) {
+    return;
+  }
+  Enemy* target = enemies_[slot];
+  EffectContext ctx;
+  ctx.player = &player_;
+  ctx.target = target;
+  ctx.enemies = &enemies_;
+  ctx.deck = nullptr;
+  card->ApplyEffect(ctx);
+}
 
 void Combat::ResolveEnemySkills() {
   int slot;

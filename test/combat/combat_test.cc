@@ -1,3 +1,4 @@
+#include "card/effect_context.h"
 #include "combat/combat.h"
 
 #include <cstddef>
