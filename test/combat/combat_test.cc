@@ -1,14 +1,15 @@
-#include "card/effect_context.h"
 #include "combat/combat.h"
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "card/card.h"
 #include "card/card_rarity.h"
 #include "card/card_type.h"
 #include "card/deck.h"
+#include "card/effect_context.h"
 #include "enemy/empty_enemy.h"
 #include "enemy/enemy_skill.h"
 #include "enemy/goblin.h"
