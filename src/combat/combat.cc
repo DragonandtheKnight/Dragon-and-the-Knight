@@ -81,3 +81,33 @@ bool Combat::UseCard(int card_index, int target_slot) {
   player_.GetDeck().DiscardPlayedCard(card_index);
   return true;
 }
+
+void Combat::ResolveOneSkill(EnemySkill skill, int slot) {}
+
+void Combat::ResolveEnemySkills() {
+  int slot;
+  for (slot = 0; slot < kMaxEnemySlots; slot++) {
+    if (enemies_[slot]->IsAlive()) {
+      ResolveOneSkill(next_acts_[slot], slot);
+    }
+  }
+}
+
+void Combat::EndRound() {
+  ResolveEnemySkills();
+  if (!player_.IsAlive()) {
+    return;
+  }
+  player_.GetDeck().DiscardHand();
+  player_.GetDeck().Draw(kHandSize);
+  player_.ResetShield();
+  int slot;
+  for (slot = 0; slot < kMaxEnemySlots; slot++) {
+    enemies_[slot]->ClearShield();
+  }
+  current_ap_ = next_ap_;
+  next_ap_ = kDefaultApPerTurn;
+  for (slot = 0; slot < kMaxEnemySlots; slot++) {
+    next_acts_[slot] = enemies_[slot]->CalculateMove();
+  }
+}

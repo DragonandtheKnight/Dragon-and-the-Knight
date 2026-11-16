@@ -27,4 +27,6 @@ class Combat {
   int current_ap_;
   int next_ap_;
   std::vector<EnemySkill> next_acts_;
+  void ResolveOneSkill(EnemySkill skill, int slot);
+  void ResolveEnemySkills();
 };
