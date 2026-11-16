@@ -304,3 +304,83 @@ TEST(CombatUseCardTest, RejectsATargetSlotOutOfRange) {
   EXPECT_EQ(combat.GetCurrentAp(), ap_before);
   EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
 }
+
+TEST(CombatEndRoundTest, DrawsANewHand) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  EXPECT_EQ(player.GetDeck().GetHand().size(),
+            static_cast<std::size_t>(Combat::kHandSize));
+}
+
+TEST(CombatEndRoundTest, ClearsEnemyShield) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 20);
+  combat.StartBattle();
+  goblin.AddShield(10);
+
+  combat.EndRound();
+
+  EXPECT_EQ(goblin.GetShield(), 0);
+}
+
+TEST(CombatEndRoundTest, GrantsTheNextApForTheNewRound) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 20);
+  combat.StartBattle();
+  ASSERT_TRUE(combat.UseCard(0, -1));
+
+  combat.EndRound();
+
+  EXPECT_EQ(combat.GetCurrentAp(), Combat::kDefaultApPerTurn);
+  EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
+}
+
+TEST(CombatEndRoundTest, RefreshesIntentsForTheNewRound) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  EXPECT_NE(combat.GetNextAct(0), EnemySkill::kAlreadyDead);
+  EXPECT_EQ(combat.GetNextAct(1), EnemySkill::kAlreadyDead);
+}
+
+TEST(CombatEndRoundTest, DoesNothingWhenThePlayerIsAlreadyDead) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 20);
+  combat.StartBattle();
+  goblin.AddShield(10);
+  player.TakeDamage(1000);
+
+  combat.EndRound();
+
+  EXPECT_EQ(goblin.GetShield(), 10);
+}
