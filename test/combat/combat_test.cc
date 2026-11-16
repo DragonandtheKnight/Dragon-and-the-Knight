@@ -384,3 +384,134 @@ TEST(CombatEndRoundTest, DoesNothingWhenThePlayerIsAlreadyDead) {
 
   EXPECT_EQ(goblin.GetShield(), 10);
 }
+
+namespace {
+
+struct RecordedCall {
+  Player* player = nullptr;
+  Enemy* target = nullptr;
+  const std::vector<Enemy*>* enemies = nullptr;
+  Deck* deck = nullptr;
+};
+
+// Copies the context it receives instead of changing any game state, so the
+// test can inspect what the combat code handed to the skill card.
+class RecordingEffect : public CardEffect {
+ public:
+  explicit RecordingEffect(std::vector<RecordedCall>* log) : log_(log) {}
+
+  void Apply(EffectContext& context) const override {
+    RecordedCall call;
+    call.player = context.player;
+    call.target = context.target;
+    call.enemies = context.enemies;
+    call.deck = context.deck;
+    log_->push_back(call);
+  }
+
+  std::unique_ptr<CardEffect> Clone() const override {
+    return std::make_unique<RecordingEffect>(log_);
+  }
+
+ private:
+  std::vector<RecordedCall>* log_;
+};
+
+// Test double for the skill-to-card lookup. Production keeps GetSkillCard
+// empty until the enemy skill cards exist; this subclass supplies the card.
+class SkillCardStub : public Combat {
+ public:
+  SkillCardStub(Player& player, const std::vector<Enemy*>& slots, Card* card)
+      : Combat(player, slots), card_(card) {}
+
+ protected:
+  Card* GetSkillCard(EnemySkill skill) const override {
+    static_cast<void>(skill);
+    return card_;
+  }
+
+ private:
+  Card* card_;
+};
+
+}  // namespace
+
+TEST(CombatResolveOneSkillTest, AppliesTheSkillCardWithThePlayerAsVictim) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<RecordedCall> log;
+  Card card = MakeCard();
+  card.AddEffect(std::make_unique<RecordingEffect>(&log));
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  SkillCardStub combat(player, slots, &card);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  ASSERT_EQ(log.size(), 1U);
+  EXPECT_EQ(log[0].player, &player);
+  EXPECT_EQ(log[0].target, &goblin);
+}
+
+TEST(CombatResolveOneSkillTest, PassesEachCasterSlotAsTheContextTarget) {
+  Player player("Knight", 100, kSeed);
+  Goblin first(1, kSeed);
+  Goblin second(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<RecordedCall> log;
+  Card card = MakeCard();
+  card.AddEffect(std::make_unique<RecordingEffect>(&log));
+
+  std::vector<Enemy*> slots = {&first, &empty, &second, &empty};
+  SkillCardStub combat(player, slots, &card);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  ASSERT_EQ(log.size(), 2U);
+  EXPECT_EQ(log[0].target, &first);
+  EXPECT_EQ(log[1].target, &second);
+}
+
+TEST(CombatResolveOneSkillTest, PassesAllFourSlotsAndNoDeck) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<RecordedCall> log;
+  Card card = MakeCard();
+  card.AddEffect(std::make_unique<RecordingEffect>(&log));
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  SkillCardStub combat(player, slots, &card);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  ASSERT_EQ(log.size(), 1U);
+  ASSERT_NE(log[0].enemies, nullptr);
+  EXPECT_EQ(log[0].enemies->size(),
+            static_cast<std::size_t>(Combat::kMaxEnemySlots));
+  EXPECT_EQ((*log[0].enemies)[0], &goblin);
+  EXPECT_EQ((*log[0].enemies)[1], &empty);
+  EXPECT_EQ(log[0].deck, nullptr);
+}
+
+TEST(CombatResolveOneSkillTest, SurvivesAMissingSkillCard) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  SkillCardStub combat(player, slots, nullptr);
+  FillDeck(player, 20);
+  combat.StartBattle();
+
+  combat.EndRound();
+
+  EXPECT_EQ(player.GetHp(), 100);
+}
