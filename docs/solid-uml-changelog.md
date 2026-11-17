@@ -71,3 +71,14 @@ To add an entry, copy the block from the [SOLID change entry template](templates
 - **What changed:** The diagram replaces the list of destination IDs in `LevelNode` with `PathEdge` objects. Each edge stores its destination and whether it is a base, extra, or vertical connection.
 - **SOLID principle(s):** SRP — connection metadata belongs to the map graph, while level actions handle gameplay.
 - **How it helped:** Navigation and map rendering can read the connection type directly from the edge, making it easier to verify and display each kind of route.
+
+### 7. Make Rng::Shuffle Independent of Card
+
+  - **Who:** ChestnutLUO (@ChestnutLUO)
+  - **Class(es):** `Rng`, `Card`, `Deck`, `FloorMap`
+  - **What changed:** The diagram changes `Rng::Shuffle(std::vector<Card>& cards)` to the template `Rng::Shuffle(std::vector<T>& items)`. Before, `Rng`
+  depended on the `Card` class; after, `Rng` has no dependency on any game class, and `Deck` passes its own draw pile to it.
+  - **SOLID principle(s):** DIP – the low-level random utility no longer depends on a concrete game class; game classes depend on `Rng`, not the other way
+  around. It also supports OCP, because new element types can be shuffled without modifying `Rng`.
+  - **How it helped:** `Rng` can be compiled and tested on its own with plain values, and the same shuffle is reused by `Deck` for cards and by `FloorMap`
+  for its map-generation orderings without any change to `Rng`
