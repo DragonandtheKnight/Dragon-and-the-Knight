@@ -59,6 +59,20 @@ The Enemy class represents the monsters that players fight during the game. Diff
 
 Our class diagram also shows different relationships between classes, including inheritance, composition, and association. These relationships help us connect different parts of the game.
 
+## SOLID UML Change Log
+
+We revised our class diagram to apply the SOLID principles. The new class diagram and an explanation of each change (which principle we applied, how we applied it, and how it improved our code) are in the change log:
+
+**[SOLID UML Change Log](docs/solid-uml-changelog.md)**
+
+To record a new change, use the [SOLID change entry template](docs/templates/solid-change-template.md).
+
+## Standup Meetings
+
+We hold regular standup meetings to share progress, plan the next tasks, and discuss blockers. Notes from every meeting are kept in a separate repository:
+
+**[Standup Meetings](https://github.com/DragonandtheKnight/Standup-Meetings)**
+
 ## Testing
 
 We follow **Test-Driven Development (TDD)** for this project. All test code is located in the `/test` directory.
