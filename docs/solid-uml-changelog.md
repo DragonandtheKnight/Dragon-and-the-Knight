@@ -106,3 +106,10 @@ To add an entry, copy the block from the [SOLID change entry template](templates
 - **What changed:** We added TargetType to describe which targets an effect needs and EffectContext to pass the caster and targets to it. Each effect receives its own context, so one card can damage an enemy and heal the player.
 - **SOLID principle(s):** SRP — Combat selects and checks targets and handles AP, while each effect applies its own behavior.
 - **How it helped:** Effects do not need to select targets themselves. This also makes it easier to test cards whose effects act on different targets.
+
+### 10. In empty enemy slots, use EmptyEnemy instead of nullptr.
+- **Who:** Eric Qian (@eqian008)
+- **Class(es):** `EmptyEnemy`, `Combat`
+- **What changed:** In slots with no enemy, instead of using nullptr, I created an enemy type called empty_enemy, which starts dead when constructed.
+- **SOLID principle(s):** LSP, EmptyEnemy inherits the same Enemy class as other enemies and uses the same interfaces, so I don't need to make is nullptr checks everytime I read a slot. I simply stuff a dead body into the slot and the combat code would naturally ignore it. If I used nullptr, I would have to tell wether the slot is enmpty every time I use enemy from the slots and I also face the risk of reading null pointers.
+- **How it helped:** It reduced the complexity of the code and reduced the risk of reading a empty pointer.
