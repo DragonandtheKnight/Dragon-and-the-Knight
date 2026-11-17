@@ -80,7 +80,7 @@ add_library(level_map STATIC
 )
 
 target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(level_map PUBLIC player)
+target_link_libraries(level_map PUBLIC player dragon_knight_game)
 
 # Main executable
 # Game/Player integration is still unfinished.
