@@ -17,9 +17,9 @@ void Player::TakeDamage(int amount) {
     return;
   }
 
-  int blocked = std::min(block_, amount);
-  block_ -= blocked;
-  amount -= blocked;
+  int absorbed = std::min(shield_, amount);
+  shield_ -= absorbed;
+  amount -= absorbed;
 
   hp_ = std::max(0, hp_ - amount);
 
@@ -38,14 +38,14 @@ void Player::Heal(int amount) {
 }
 
 // Increase the player's block
-void Player::AddBlock(int amount) {
+void Player::AddShield(int amount) {
   if (amount > 0) {
-    block_ += amount;
+    shield_ += amount;
   }
 }
 
 // Reset block to zero
-void Player::ResetBlock() { block_ = 0; }
+void Player::ResetShield() { shield_ = 0; }
 
 // Increase maximum HP and current HP
 void Player::IncreaseMaxHp(int amount) {
@@ -102,7 +102,7 @@ int Player::GetHp() const { return hp_; }
 
 int Player::GetMaxHp() const { return max_hp_; }
 
-int Player::GetBlock() const { return block_; }
+int Player::GetShield() const { return shield_; }
 
 int Player::GetMaxEnergy() const { return max_energy_; }
 
