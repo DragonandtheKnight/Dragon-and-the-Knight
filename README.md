@@ -42,8 +42,7 @@ Please check online version by following URL ⬇️
 
 ## Class Diagram
 
-<img width="3209" height="3723" alt="shapes at 26-10-24 16 54 44" src="https://github.com/user-attachments/assets/f481bbf6-c273-4300-9aa0-ad42ff62cba8" />
-
+<img width="17261" height="11629" alt="Class UML_under_10MB" src="https://github.com/user-attachments/assets/98f2757e-279c-406d-a980-3dd82332e4dd" />
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
 
