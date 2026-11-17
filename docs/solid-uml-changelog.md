@@ -47,3 +47,27 @@ To add an entry, copy the block from the [SOLID change entry template](templates
 - **What changed:** We updated the Event and Entertainment classes to receive an `Rng` object through their constructors instead of creating separate random number generators. Event uses it to generate random events, while Entertainment uses it to roll dice.
 - **SOLID principle(s):** SRP, Rng handles random number generation, while Event and Entertainment focus on their own gameplay logic.
 - **How it helped:** This reduces duplicated code and makes each class easier to maintain. It also makes testing easier because we can use the same random seed to reproduce results.
+
+### 4. Keep Visited-Node Tracking in FloorMap
+
+- **Who:** Ink Wang (@1nkWang)
+- **Class(es):** `FloorMap`
+- **What changed:** The diagram adds `visited_` and `IsVisited()` to `FloorMap` and specifies that `AvailablePaths()` only returns connected, unvisited nodes.
+- **SOLID principle(s):** SRP — `FloorMap` owns navigation state and applies movement rules, while the map generator builds the layout.
+- **How it helped:** The navigation rules can be tested independently of the generation algorithm, including whether a player can return along a two-way path to a node they already visited.
+
+### 5. Make Map Generation Settings Explicit
+
+- **Who:** Ink Wang (@1nkWang)
+- **Class(es):** `FloorConfig`, `IMapGenerator`, `MapGenerator`
+- **What changed:** The diagram adds `FloorConfig` and shows that `IMapGenerator` uses it. It groups settings for grid size, removed nodes, minimum nodes per column, and the number of extra and vertical connections.
+- **SOLID principle(s):** SRP — `FloorConfig` holds the settings, while `MapGenerator` applies them to build the floor.
+- **How it helped:** This design makes it possible to test different grid sizes and connection limits through configuration while reusing the generation algorithm.
+
+### 6. Represent Connection Types Explicitly
+
+- **Who:** Ink Wang (@1nkWang)
+- **Class(es):** `LevelNode`, `PathEdge`, `PathKind`
+- **What changed:** The diagram replaces the list of destination IDs in `LevelNode` with `PathEdge` objects. Each edge stores its destination and whether it is a base, extra, or vertical connection.
+- **SOLID principle(s):** SRP — connection metadata belongs to the map graph, while level actions handle gameplay.
+- **How it helped:** Navigation and map rendering can read the connection type directly from the edge, making it easier to verify and display each kind of route.
