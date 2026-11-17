@@ -82,3 +82,27 @@ To add an entry, copy the block from the [SOLID change entry template](templates
   around. It also supports OCP, because new element types can be shuffled without modifying `Rng`.
   - **How it helped:** `Rng` can be compiled and tested on its own with plain values, and the same shuffle is reused by `Deck` for cards and by `FloorMap`
   for its map-generation orderings without any change to `Rng`
+
+### 8. Separate Card Data from Effect Behavior
+
+- **Who:** Jingtong Hu (@TNY233)
+- **Class(es):** `Card`, `CardEffect`, `DamageEffect`, `HealEffect`, `BlockEffect`
+- **What changed:** We added separate classes for damage, healing, and shield effects. Card keeps the card information and its list of effects, while each effect class implements its own Apply() method.
+- **SOLID principle(s):** SRP — Card manages card information, while each effect handles its own behavior.
+- **How it helped:** Changing how damage works does not require changing the healing or shield effects. We can also test each effect separately.
+
+### 9. Let Card Use the CardEffect Interface
+
+- **Who:** Jingtong Hu (@TNY233)
+- **Class(es):** `Card`, `CardEffect`
+- **What changed:** We added AddEffect() and a list of CardEffect objects to Card. Card calls the same Apply() interface for every effect, and Clone() allows effects to be copied with the card.
+- **SOLID principle(s):** OCP and DIP — Card depends on the CardEffect interface, so new effect classes can be added without changing how Card executes its effects.
+- **How it helped:** One card can combine several effects. We can add more effect types without adding special cases to Card.
+
+### 10. Separate Target Selection from Effect Execution
+
+- **Who:** Jingtong Hu (@TNY233)
+- **Class(es):** `Card`, `CardEffect`, `EffectContext`, `TargetType`, `Combat`
+- **What changed:** We added TargetType to describe which targets an effect needs and EffectContext to pass the caster and targets to it. Each effect receives its own context, so one card can damage an enemy and heal the player.
+- **SOLID principle(s):** SRP — Combat selects and checks targets and handles AP, while each effect applies its own behavior.
+- **How it helped:** Effects do not need to select targets themselves. This also makes it easier to test cards whose effects act on different targets.
