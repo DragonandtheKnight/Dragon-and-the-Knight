@@ -13,20 +13,24 @@ Player::Player(std::string name, int max_hp, uint32_t deck_seed)
 
 // Block damage before HP
 void Player::TakeDamage(int amount) {
-  if (amount <= 0) {
+  if (amount <= 0 || !is_alive_) {
     return;
   }
 
-  int blocked = std::min(block_, amount);
-  block_ -= blocked;
-  amount -= blocked;
+  int absorbed = std::min(shield_, amount);
+  shield_ -= absorbed;
+  amount -= absorbed;
 
   hp_ = std::max(0, hp_ - amount);
+
+  if (hp_ == 0) {
+    is_alive_ = false;
+  }
 }
 
 // Restore HP without exceeding maximum HP
 void Player::Heal(int amount) {
-  if (amount <= 0) {
+  if (amount <= 0 || !is_alive_) {
     return;
   }
 
@@ -34,9 +38,25 @@ void Player::Heal(int amount) {
 }
 
 // Increase the player's block
-void Player::AddBlock(int amount) {
+void Player::AddShield(int amount) {
   if (amount > 0) {
-    block_ += amount;
+    shield_ += amount;
+  }
+}
+
+// Reset block to zero
+void Player::ResetShield() { shield_ = 0; }
+
+// Increase maximum HP and current HP
+void Player::IncreaseMaxHp(int amount) {
+  if (amount <= 0) {
+    return;
+  }
+
+  max_hp_ += amount;
+
+  if (is_alive_) {
+    hp_ += amount;
   }
 }
 
@@ -44,6 +64,7 @@ void Player::AddBlock(int amount) {
 void Player::GainGold(int amount) {
   if (amount > 0) {
     gold_ += amount;
+    total_gold_gained_ += amount;
   }
 }
 
@@ -57,11 +78,22 @@ bool Player::SpendGold(int amount) {
   return true;
 }
 
-// Reset energy at the beginning of a turn.
-void Player::ResetEnergy() { energy_ = 3; }
+// Increase maximum energy
+void Player::IncreaseMaxEnergy(int amount) {
+  if (amount > 0) {
+    max_energy_ += amount;
+  }
+}
 
-// Check whether the player is alive.
-bool Player::IsAlive() const { return hp_ > 0; }
+// Reduce maximum energy without going below zero
+void Player::ReduceMaxEnergy(int amount) {
+  if (amount > 0) {
+    max_energy_ = std::max(0, max_energy_ - amount);
+  }
+}
+
+// Check whether the player is alive
+bool Player::IsAlive() const { return is_alive_; }
 
 // Getter
 const std::string& Player::GetName() const { return name_; }
@@ -70,11 +102,13 @@ int Player::GetHp() const { return hp_; }
 
 int Player::GetMaxHp() const { return max_hp_; }
 
-int Player::GetBlock() const { return block_; }
+int Player::GetShield() const { return shield_; }
 
-int Player::GetEnergy() const { return energy_; }
+int Player::GetMaxEnergy() const { return max_energy_; }
 
 int Player::GetGold() const { return gold_; }
+
+int Player::GetTotalGoldGained() const { return total_gold_gained_; }
 
 // Deck access
 Deck& Player::GetDeck() { return deck_; }

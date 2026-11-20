@@ -15,8 +15,8 @@ TEST(PlayerConstructorTest, InitializesPlayerCorrectly) {
   EXPECT_EQ(player.GetName(), "Knight");
   EXPECT_EQ(player.GetHp(), 100);
   EXPECT_EQ(player.GetMaxHp(), 100);
-  EXPECT_EQ(player.GetBlock(), 0);
-  EXPECT_EQ(player.GetEnergy(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
+  EXPECT_EQ(player.GetMaxEnergy(), 10);
   EXPECT_EQ(player.GetGold(), 0);
   EXPECT_TRUE(player.IsAlive());
 }
@@ -45,24 +45,24 @@ TEST(PlayerDamageTest, DamageReducesHp) {
   EXPECT_EQ(player.GetHp(), 70);
 }
 
-TEST(PlayerDamageTest, BlockAbsorbsDamageFirst) {
+TEST(PlayerDamageTest, ShieldAbsorbsDamageFirst) {
   Player player("Knight", 100, kDeckSeed);
-  player.AddBlock(20);
+  player.AddShield(20);
 
   player.TakeDamage(30);
 
   EXPECT_EQ(player.GetHp(), 90);
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetShield(), 0);
 }
 
-TEST(PlayerDamageTest, BlockCanAbsorbAllDamage) {
+TEST(PlayerDamageTest, ShieldCanAbsorbAllDamage) {
   Player player("Knight", 100, kDeckSeed);
-  player.AddBlock(20);
+  player.AddShield(20);
 
   player.TakeDamage(10);
 
   EXPECT_EQ(player.GetHp(), 100);
-  EXPECT_EQ(player.GetBlock(), 10);
+  EXPECT_EQ(player.GetShield(), 10);
 }
 
 TEST(PlayerDamageTest, HpCannotBeNegative) {
@@ -110,22 +110,52 @@ TEST(PlayerHealTest, NegativeHealingDoesNothing) {
   EXPECT_EQ(player.GetHp(), 80);
 }
 
-// Block tests
-TEST(PlayerBlockTest, AddBlockIncreasesBlock) {
+// Max HP tests
+TEST(PlayerMaxHpTest, IncreaseMaxHpRaisesMaxHpAndHp) {
   Player player("Knight", 100, kDeckSeed);
 
-  player.AddBlock(15);
-  player.AddBlock(5);
+  player.IncreaseMaxHp(20);
 
-  EXPECT_EQ(player.GetBlock(), 20);
+  EXPECT_EQ(player.GetMaxHp(), 120);
+  EXPECT_EQ(player.GetHp(), 120);
 }
 
-TEST(PlayerBlockTest, NegativeBlockIsIgnored) {
+TEST(PlayerMaxHpTest, NonPositiveMaxHpIncreaseIsIgnored) {
   Player player("Knight", 100, kDeckSeed);
 
-  player.AddBlock(-10);
+  player.IncreaseMaxHp(0);
+  player.IncreaseMaxHp(-10);
 
-  EXPECT_EQ(player.GetBlock(), 0);
+  EXPECT_EQ(player.GetMaxHp(), 100);
+  EXPECT_EQ(player.GetHp(), 100);
+}
+
+// Block tests
+TEST(PlayerShieldTest, AddShieldIncreasesBlock) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.AddShield(15);
+  player.AddShield(5);
+
+  EXPECT_EQ(player.GetShield(), 20);
+}
+
+TEST(PlayerShieldTest, NegativeBlockIsIgnored) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.AddShield(-10);
+
+  EXPECT_EQ(player.GetShield(), 0);
+}
+
+TEST(PlayerShieldTest, ResetShieldDoesNotChangeHp) {
+  Player player("Knight", 100, kDeckSeed);
+  player.TakeDamage(30);
+  player.AddShield(15);
+
+  player.ResetShield();
+
+  EXPECT_EQ(player.GetHp(), 70);
 }
 
 // Gold tests
@@ -163,13 +193,68 @@ TEST(PlayerGoldTest, NegativeGoldOperationsAreIgnored) {
   EXPECT_EQ(player.GetGold(), 0);
 }
 
-// Energy tests
-TEST(PlayerEnergyTest, ResetEnergySetsEnergyToThree) {
+TEST(PlayerGoldTest, TotalGoldGainedStartsAtZero) {
   Player player("Knight", 100, kDeckSeed);
 
-  player.ResetEnergy();
+  EXPECT_EQ(player.GetTotalGoldGained(), 0);
+}
 
-  EXPECT_EQ(player.GetEnergy(), 3);
+TEST(PlayerGoldTest, TotalGoldGainedAddsEveryGain) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.GainGold(50);
+  player.GainGold(20);
+
+  EXPECT_EQ(player.GetTotalGoldGained(), 70);
+}
+
+TEST(PlayerGoldTest, NegativeGoldGainDoesNotChangeTotalGoldGained) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.GainGold(-10);
+
+  EXPECT_EQ(player.GetTotalGoldGained(), 0);
+}
+
+// Energy tests
+TEST(PlayerEnergyTest, MaxEnergyStartsAtTen) {
+  Player player("Knight", 100, kDeckSeed);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 10);
+}
+
+TEST(PlayerEnergyTest, IncreaseMaxEnergyRaisesMaxEnergy) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.IncreaseMaxEnergy(2);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 12);
+}
+
+TEST(PlayerEnergyTest, NonPositiveMaxEnergyIncreaseIsIgnored) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.IncreaseMaxEnergy(0);
+  player.IncreaseMaxEnergy(-2);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 10);
+}
+
+TEST(PlayerEnergyTest, ReduceMaxEnergyLowersMaxEnergy) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.ReduceMaxEnergy(3);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 7);
+}
+
+TEST(PlayerEnergyTest, NonPositiveMaxEnergyReductionIsIgnored) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.ReduceMaxEnergy(0);
+  player.ReduceMaxEnergy(-2);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 10);
 }
 
 // Alive status tests
@@ -181,12 +266,59 @@ TEST(PlayerAliveTest, PlayerDiesAtZeroHp) {
   EXPECT_FALSE(player.IsAlive());
 }
 
-TEST(PlayerAliveTest, PlayerCanHealAfterReachingZeroHp) {
+TEST(PlayerAliveTest, DeadPlayerCannotBeHealed) {
   Player player("Knight", 100, kDeckSeed);
   player.TakeDamage(100);
 
   player.Heal(10);
 
-  EXPECT_TRUE(player.IsAlive());
-  EXPECT_EQ(player.GetHp(), 10);
+  EXPECT_FALSE(player.IsAlive());
+  EXPECT_EQ(player.GetHp(), 0);
+}
+
+TEST(PlayerShieldTest, ResetShieldClearsShield) {
+  Player player("Knight", 100, kDeckSeed);
+  player.AddShield(20);
+
+  player.ResetShield();
+
+  EXPECT_EQ(player.GetShield(), 0);
+}
+
+TEST(PlayerMaxHpTest, IncreaseMaxHpRaisesBothHpValues) {
+  Player player("Knight", 100, kDeckSeed);
+  player.TakeDamage(30);
+
+  player.IncreaseMaxHp(20);
+
+  EXPECT_EQ(player.GetMaxHp(), 120);
+  EXPECT_EQ(player.GetHp(), 90);
+}
+
+TEST(PlayerMaxHpTest, DeadPlayerCannotBeRevived) {
+  Player player("Knight", 100, kDeckSeed);
+  player.TakeDamage(100);
+
+  player.IncreaseMaxHp(20);
+
+  EXPECT_EQ(player.GetHp(), 0);
+  EXPECT_FALSE(player.IsAlive());
+}
+
+TEST(PlayerEnergyTest, ReduceMaxEnergyCannotGoBelowZero) {
+  Player player("Knight", 100, kDeckSeed);
+
+  player.ReduceMaxEnergy(20);
+
+  EXPECT_EQ(player.GetMaxEnergy(), 0);
+}
+
+TEST(PlayerGoldTest, TotalGoldIncludesSpentGold) {
+  Player player("Knight", 100, kDeckSeed);
+  player.GainGold(100);
+
+  player.SpendGold(40);
+
+  EXPECT_EQ(player.GetGold(), 60);
+  EXPECT_EQ(player.GetTotalGoldGained(), 100);
 }

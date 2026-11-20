@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.24)
 
 project(DragonAndTheKnight LANGUAGES CXX)
@@ -17,7 +18,12 @@ target_sources(dragon_knight_game
         src/card/deck.cc
         src/game/game_state_machine.cc
         src/game/rng.cc
-        src/player/player.cc
+        src/enemy/enemy.cc
+        src/enemy/goblin.cc
+        src/enemy/slime.cc
+        src/enemy/shaman.cc
+        src/enemy/giant.cc
+        src/enemy/dragon.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
@@ -39,6 +45,34 @@ target_sources(dragon_knight_ui
         src/ui/main_menu_screen.cc
         src/ui/settings_screen.cc
         src/ui/widgets.cc
+        src/enemy/enemy.h
+        src/enemy/enemy_skill.h
+        src/enemy/enemy_type.h
+        src/enemy/goblin.h
+        src/enemy/slime.h
+        src/enemy/shaman.h
+        src/enemy/giant.h
+        src/enemy/dragon.h
+)
+
+# Card library
+add_library(card
+    src/card/card.cc
+    src/card/card.h
+    src/card/card_rarity.h
+    src/card/card_type.h
+    src/card/card_effect.h
+    src/card/effect_context.h
+)
+target_include_directories(card PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+# Deck library (from main / PR #41)
+add_library(deck src/card/deck.cc src/card/deck.h)
+target_link_libraries(deck PUBLIC card dragon_knight_game)
+
+# Player library (from PR #21)
+add_library(player STATIC src/player/player.cc)
+target_sources(player
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
@@ -54,6 +88,27 @@ target_sources(dragon_knight_ui
         src/ui/settings_screen.h
         src/ui/shop_screen.h
         src/ui/widgets.h
+        src/player/player.h
+)
+target_link_libraries(player PUBLIC deck)
+
+# Level and map library
+add_library(level_map STATIC
+    src/level/level.cc
+    src/level/level.h
+    src/level/level_type.h
+
+    src/level/shop.cc
+    src/level/shop.h
+    src/level/rest.cc
+    src/level/rest.h
+    src/level/event.cc
+    src/level/event.h
+    src/level/entertainment.cc
+    src/level/entertainment.h
+
+    src/map/floor_map.cc
+    src/map/floor_map.h
 )
 target_link_libraries(dragon_knight_ui PUBLIC
     dragon_knight_game
@@ -67,6 +122,14 @@ set_target_properties(dragon_knight_ui PROPERTIES
 add_custom_target(check_ui_headers ALL)
 add_dependencies(check_ui_headers dragon_knight_ui_verify_interface_header_sets)
 
+target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(level_map PUBLIC player dragon_knight_game)
+
+# Main executable
+# Game/Player integration is still unfinished.
+add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL src/main.cpp)
+target_link_libraries(dragon_and_the_knight PRIVATE player level_map)
+
 enable_testing()
 
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
@@ -74,10 +137,17 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 add_subdirectory(lib/googletest EXCLUDE_FROM_ALL)
 include(GoogleTest)
 
+# Core game and enemy tests
 add_executable(dragon_knight_game_tests
     test/game/game_state_machine_test.cc
     test/game/rng_test.cc
     test/player/player_test.cc
+    test/enemy/enemy_test.cc
+    test/enemy/goblin_test.cc
+    test/enemy/slime_test.cc
+    test/enemy/shaman_test.cc
+    test/enemy/giant_test.cc
+    test/enemy/dragon_test.cc
 )
 target_link_libraries(dragon_knight_game_tests PRIVATE
     dragon_knight_game
@@ -100,3 +170,54 @@ target_link_libraries(dragon_knight_tests PRIVATE
 # start fails the test run instead of the build.
 gtest_discover_tests(dragon_knight_game_tests DISCOVERY_MODE PRE_TEST)
 gtest_discover_tests(dragon_knight_tests DISCOVERY_MODE PRE_TEST)
+gtest_discover_tests(
+    dragon_knight_game_tests
+    DISCOVERY_MODE PRE_TEST
+)
+
+# Player tests
+add_executable(player_tests test/player/player_test.cc)
+target_link_libraries(player_tests PRIVATE
+    player
+    GTest::gtest_main
+)
+gtest_discover_tests(
+    player_tests
+    TEST_PREFIX "player."
+    DISCOVERY_MODE PRE_TEST
+)
+
+# Card tests
+add_executable(card_tests test/card/card_test.cc)
+target_link_libraries(card_tests PRIVATE card GTest::gtest_main)
+gtest_discover_tests(card_tests TEST_PREFIX "card." DISCOVERY_MODE PRE_TEST)
+
+# Deck tests
+add_executable(deck_tests test/card/deck_test.cc)
+target_link_libraries(deck_tests PRIVATE deck GTest::gtest_main)
+gtest_discover_tests(deck_tests TEST_PREFIX "deck." DISCOVERY_MODE PRE_TEST)
+
+# Level and map tests
+add_executable(level_map_tests test/map/floor_map_test.cc)
+target_link_libraries(level_map_tests PRIVATE level_map GTest::gtest_main)
+gtest_discover_tests(level_map_tests DISCOVERY_MODE PRE_TEST)
+
+# Non-combat level tests
+add_executable(non_combat_level_tests
+    test/level/shop_test.cc
+    test/level/rest_test.cc
+    test/level/event_test.cc
+    test/level/entertainment_test.cc
+)
+
+target_link_libraries(non_combat_level_tests PRIVATE
+    level_map
+    player
+    GTest::gtest_main
+)
+
+gtest_discover_tests(
+    non_combat_level_tests
+    TEST_PREFIX "non_combat."
+    DISCOVERY_MODE PRE_TEST
+)

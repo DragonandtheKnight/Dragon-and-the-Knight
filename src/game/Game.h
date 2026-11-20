@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "map/FloorMap.h"
-#include "player/Player.h"
+#include "map/floor_map.h"
+#include "player/player.h"
 
 class Game {
  private:

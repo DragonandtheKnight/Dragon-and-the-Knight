@@ -8,14 +8,14 @@ The game takes place in a fantasy world. The player can travel through different
 The main goal is to follow the storyline, become stronger, and defeat the final boss, a dragon.
 Your project description should summarize the project you are proposing. Be sure to include:
 
-* Why is it important or interesting to you?  
-  
-  * It is a game, and I have never made a game before.  
-  * Compared to other types of projects, we find RPG games more interesting and think we would have more fun developing one. Since I have never designed or developed a game before, I am very interested in this project.  
-* What languages/tools/technologies do you plan to use? (This list may change over the course of the project)  
+* Why is it important or interesting to you?
+
+  * It is a game, and I have never made a game before.
+  * Compared to other types of projects, we find RPG games more interesting and think we would have more fun developing one. Since I have never designed or developed a game before, I am very interested in this project.
+* What languages/tools/technologies do you plan to use? (This list may change over the course of the project)
   - languages C++
   - TUI Framwork: [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (FTXUI is a modern C++ library for building interactive terminals.)
-* What will be the input/output of your project?  
+* What will be the input/output of your project?
 
   * User's click and type will be the input, output will be shown in the terminal.
 * What are the features that the project provides?
@@ -32,7 +32,8 @@ Your project description should summarize the project you are proposing. Be sure
 
 
 ## User Interface Specification- (Navigation Diagram&Screen Layouts)
-<img width="7331" height="3908" alt="shapes at 26-10-24 16 48 25" src="https://github.com/user-attachments/assets/36d55315-6924-4178-b5f0-2f43197e6931" />
+<img width="7987" height="3908" alt="shapes at 26-10-26 19 09 37" src="https://github.com/user-attachments/assets/4d1c8ee3-f42e-47b9-8e4c-a7034d4b34f2" />
+
 
 Please check online version by following URL ⬇️
 
@@ -41,8 +42,7 @@ Please check online version by following URL ⬇️
 
 ## Class Diagram
 
-<img width="3209" height="3723" alt="shapes at 26-10-24 16 54 44" src="https://github.com/user-attachments/assets/f481bbf6-c273-4300-9aa0-ad42ff62cba8" />
-
+<img width="17261" height="11629" alt="Class UML_under_10MB" src="https://github.com/user-attachments/assets/98f2757e-279c-406d-a980-3dd82332e4dd" />
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
 
@@ -50,13 +50,28 @@ Please check online version by following URL ⬇️
 
 The Game class controls the main game process including starting the game, running the game, moving to the next floor, and ending the game. The FloorMap class manages the map and the paths that players can choose. The Level class is an abstract base class, and Combat, Shop, Rest, Event, and Entertainment inherit from it. Each level has different functions. For example, players can fight monsters in Combat, buy cards in Shop, and recover HP in Rest.
 
-The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddBlock(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
+The Player class stores the player's information including HP, maximum HP, block, energy, gold, and deck. It has functions like TakeDamage(), Heal(), AddShield(), GainGold(), and SpendGold(). It also has getter functions that allow other classes to access the player's information.
 
 The Card class stores information about each card including its name, type, cost, rarity, and effect value. The Deck class manages the player's cards including drawing, shuffling, and discarding cards. The Battle class controls the turn based combat system. It manages player turns, enemy turns, playing cards, and checking whether the battle has ended.
 
 The Enemy class represents the monsters that players fight during the game. Different enemies can have different abilities.
 
 Our class diagram also shows different relationships between classes, including inheritance, composition, and association. These relationships help us connect different parts of the game.
+
+## SOLID UML Change Log
+
+We revised our class diagram to apply the SOLID principles. The new class diagram and an explanation of each change (which principle we applied, how we applied it, and how it improved our code) are in the change log:
+
+**[SOLID UML Change Log](docs/solid-uml-changelog.md)**
+
+To record a new change, use the [SOLID change entry template](docs/templates/solid-change-template.md).
+
+
+## Standup Meetings
+
+We hold regular standup meetings to share progress, plan the next tasks, and discuss blockers. Notes from every meeting are kept in a separate repository:
+
+**[Standup Meetings](https://github.com/DragonandtheKnight/Standup-Meetings)**
 
 ## Testing
 

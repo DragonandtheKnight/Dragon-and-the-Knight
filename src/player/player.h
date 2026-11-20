@@ -12,24 +12,36 @@ class Player {
 
   // Health and defense
   void TakeDamage(int amount);
+  // Restores HP up to the maximum. Does nothing if the player is dead or
+  // amount is below 1.
   void Heal(int amount);
-  void AddBlock(int amount);
+  void AddShield(int amount);
+  // Removes all block. Battle calls it when block expires.
+  void ResetShield();
+  // Raises maximum HP and current HP by amount. Amounts below 1 do nothing.
+  void IncreaseMaxHp(int amount);
   bool IsAlive() const;
 
   // Gold
   void GainGold(int amount);
   bool SpendGold(int amount);
 
-  // Energy
-  void ResetEnergy();
+  // Energy. Battle tracks the current energy; Player only holds the cap, so
+  // cards and buffs can raise it between battles.
+  //
+  // Amounts below 1 do nothing.
+  void IncreaseMaxEnergy(int amount);
+  void ReduceMaxEnergy(int amount);
 
   // Getters
   const std::string& GetName() const;
   int GetHp() const;
   int GetMaxHp() const;
-  int GetBlock() const;
-  int GetEnergy() const;
+  int GetShield() const;
+  int GetMaxEnergy() const;
   int GetGold() const;
+  // All gold gained this run, including gold already spent.
+  int GetTotalGoldGained() const;
 
   // Deck access
   Deck& GetDeck();
@@ -39,8 +51,10 @@ class Player {
   std::string name_;
   int hp_;
   int max_hp_;
-  int block_ = 0;
-  int energy_ = 0;
+  bool is_alive_ = true;
+  int shield_ = 0;
+  int max_energy_ = 10;
   int gold_ = 0;
+  int total_gold_gained_ = 0;
   Deck deck_;
 };
