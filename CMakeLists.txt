@@ -95,6 +95,7 @@ target_link_libraries(level_map PUBLIC player dragon_knight_game)
 add_library(dragon_knight_ui STATIC)
 target_sources(dragon_knight_ui
     PRIVATE
+        src/ui/app.cc
         src/ui/game_over_screen.cc
         src/ui/main_menu_screen.cc
         src/ui/settings_screen.cc
@@ -127,6 +128,10 @@ set_target_properties(dragon_knight_ui PROPERTIES
 )
 add_custom_target(check_ui_headers ALL)
 add_dependencies(check_ui_headers dragon_knight_ui_verify_interface_header_sets)
+
+# The game
+add_executable(dragon_and_the_knight src/main.cc)
+target_link_libraries(dragon_and_the_knight PRIVATE dragon_knight_ui)
 
 enable_testing()
 
@@ -208,6 +213,7 @@ gtest_discover_tests(
 
 # UI tests
 add_executable(dragon_knight_tests
+    test/ui/app_test.cc
     test/ui/game_over_screen_test.cc
     test/ui/main_menu_screen_test.cc
     test/ui/settings_screen_test.cc
