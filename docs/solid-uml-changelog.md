@@ -113,3 +113,11 @@ To add an entry, copy the block from the [SOLID change entry template](templates
 - **What changed:** In slots with no enemy, instead of using nullptr, I created an enemy type called empty_enemy, which starts dead when constructed.
 - **SOLID principle(s):** LSP, EmptyEnemy inherits the same Enemy class as other enemies and uses the same interfaces, so I don't need to make is nullptr checks everytime I read a slot. I simply stuff a dead body into the slot and the combat code would naturally ignore it. If I used nullptr, I would have to tell wether the slot is enmpty every time I use enemy from the slots and I also face the risk of reading null pointers.
 - **How it helped:** It reduced the complexity of the code and reduced the risk of reading a empty pointer.
+
+### 11. Split App into Glue, a Safe Screen Swap, and the Terminal Loop
+
+- **Who:** ChestnutLUO (@ChestnutLUO)
+- **Class(es):** `App`, `ScreenHost`, `GameStateMachine`, `main()`, `MakeBattleScreen`
+- **What changed:** Before, `App` owned the terminal (`ScreenInteractive screen_` and `Run()`), an unimplemented `Game`, and one `Show…()` method per screen. After, `App` takes an `on_exit` callback, owns `GameStateMachine` and the difficulty, and exposes `Root()`; `main()` owns the terminal loop. A new internal `ScreenHost` component swaps the shown screen on the next redraw. `MakeBattleScreen` now reads `const Combat&` instead of the `Battle` class, which does not exist.
+- **SOLID principle(s):** SRP – screens only draw and report the player's choices, `GameStateMachine` only decides the next screen, `App` only applies choices and builds that screen, `ScreenHost` only swaps it in, and `main()` only runs the terminal. DIP – `App` depends on an `on_exit` callback instead of the concrete terminal, and game classes such as `Combat` never depend on the UI.
+- **How it helped:** `App` can be tested without a terminal: tests click and press keys on `Root()` directly (`test/ui/app_test.cc`). Swapping on redraw removes the risk of a key handler, such as Esc in Settings, destroying its own screen while it is still running. `Combat` stays independent of the UI: its methods run to completion and the next redraw shows the result.
