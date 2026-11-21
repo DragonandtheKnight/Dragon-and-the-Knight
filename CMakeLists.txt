@@ -87,7 +87,7 @@ target_link_libraries(level_map PUBLIC player)
 # Battle library
 add_library(combat STATIC src/combat/combat.cc src/combat/combat.h)
 target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(combat PUBLIC player)
+target_link_libraries(combat PUBLIC player buff)
 
 # Buff library
 add_library(buff STATIC src/combat/buff.cc src/combat/buff.h)
@@ -175,12 +175,12 @@ gtest_discover_tests(
 )
 
 # Battle tests
-add_executable(combat_tests test/combat/combat_test.cc)
+add_executable(combat_tests test/combat/combat_test.cc test/combat/combat_buff_test.cc)
 target_link_libraries(combat_tests PRIVATE combat GTest::gtest_main)
 gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
 
 # Buff tests
-add_executable(buff_tests test/buff/buff_test.cc)
+add_executable(buff_tests test/buff/buff_test.cc test/buff/buff_apply_test.cc)
 target_link_libraries(buff_tests PRIVATE buff GTest::gtest_main)
 gtest_discover_tests(
     buff_tests
