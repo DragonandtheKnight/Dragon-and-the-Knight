@@ -173,3 +173,12 @@ gtest_discover_tests(
 add_executable(combat_tests test/combat/combat_test.cc)
 target_link_libraries(combat_tests PRIVATE combat GTest::gtest_main)
 gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
+
+# Buff tests
+add_executable(buff_tests test/buff/buff_test.cc)
+target_link_libraries(buff_tests PRIVATE card GTest::gtest_main)
+gtest_discover_tests(
+    buff_tests
+    TEST_PREFIX "buff."
+    DISCOVERY_MODE PRE_TEST
+)
