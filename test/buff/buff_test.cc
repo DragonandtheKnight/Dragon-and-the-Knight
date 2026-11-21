@@ -1,4 +1,4 @@
-#include "buff/buff.h"
+#include "combat/buff.h"
 
 #include <memory>
 #include <string>

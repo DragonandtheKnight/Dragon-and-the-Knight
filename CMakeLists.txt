@@ -89,6 +89,11 @@ add_library(combat STATIC src/combat/combat.cc src/combat/combat.h)
 target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(combat PUBLIC player)
 
+# Buff library
+add_library(buff STATIC src/combat/buff.cc src/combat/buff.h)
+target_include_directories(buff PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(buff PUBLIC card)
+
 # Main executable
 # Game/Player integration is still unfinished.
 add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL src/main.cpp)
@@ -176,7 +181,7 @@ gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
 
 # Buff tests
 add_executable(buff_tests test/buff/buff_test.cc)
-target_link_libraries(buff_tests PRIVATE card GTest::gtest_main)
+target_link_libraries(buff_tests PRIVATE buff GTest::gtest_main)
 gtest_discover_tests(
     buff_tests
     TEST_PREFIX "buff."
