@@ -18,9 +18,9 @@ constexpr std::uint32_t kSeed = 42;
 }  // namespace
 
 TEST(ShieldMaxHpEnemyEffectTest, ShieldsTheLivingEnemyWithTheHighestMaxHp) {
-  Goblin caster(1, kSeed);   // max hp 30, casts the skill
+  Goblin caster(1, kSeed);     // max hp 30, casts the skill
   Goblin dead_king(3, kSeed);  // max hp 50, dead: ignored
-  Goblin goblin(2, kSeed);   // max hp 40: wins
+  Goblin goblin(2, kSeed);     // max hp 40: wins
   EmptyEnemy empty(0, kSeed);
   dead_king.TakeDamage(1000);
   const ShieldMaxHpEnemyEffect effect(5);
@@ -36,10 +36,10 @@ TEST(ShieldMaxHpEnemyEffectTest, ShieldsTheLivingEnemyWithTheHighestMaxHp) {
   EXPECT_EQ(dead_king.GetShield(), 0);
 }
 
-TEST(ShieldMaxHpEnemyEffectTest, SkipsTheCasterWhenItHasTheHighestMaxHp) {
-  Goblin caster(3, kSeed);  // max hp 50, casts: skipped
-  Goblin small(1, kSeed);  // max hp 30
-  Goblin large(2, kSeed);  // max hp 40: wins among the others
+TEST(ShieldMaxHpEnemyEffectTest, ShieldsTheCasterWhenItHasTheHighestMaxHp) {
+  Goblin caster(3, kSeed);  // max hp 50, casts: highest, shields itself
+  Goblin small(1, kSeed);   // max hp 30
+  Goblin large(2, kSeed);   // max hp 40
   const ShieldMaxHpEnemyEffect effect(5);
 
   std::vector<Enemy*> enemies = {&caster, &small, &large};
@@ -48,15 +48,15 @@ TEST(ShieldMaxHpEnemyEffectTest, SkipsTheCasterWhenItHasTheHighestMaxHp) {
   context.enemies = &enemies;
   effect.Apply(context);
 
-  EXPECT_EQ(large.GetShield(), 5);
+  EXPECT_EQ(caster.GetShield(), 5);
   EXPECT_EQ(small.GetShield(), 0);
-  EXPECT_EQ(caster.GetShield(), 0);
+  EXPECT_EQ(large.GetShield(), 0);
 }
 
 TEST(ShieldMaxHpEnemyEffectTest, BreaksATieBySlotOrder) {
-  Goblin caster(2, kSeed);  // max hp 40, casts: skipped
-  Goblin first(1, kSeed);    // max hp 30, earlier slot
-  Goblin second(1, kSeed);   // max hp 30, later slot
+  Goblin caster(1, kSeed);  // max hp 30, casts
+  Goblin first(2, kSeed);   // max hp 40, earlier slot
+  Goblin second(2, kSeed);  // max hp 40, later slot
   const ShieldMaxHpEnemyEffect effect(5);
 
   std::vector<Enemy*> enemies = {&first, &second, &caster};
@@ -69,6 +69,20 @@ TEST(ShieldMaxHpEnemyEffectTest, BreaksATieBySlotOrder) {
   EXPECT_EQ(second.GetShield(), 0);
 }
 
+TEST(ShieldMaxHpEnemyEffectTest, ShieldsTheCasterWhenItIsTheOnlyOneAlive) {
+  Goblin caster(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  const ShieldMaxHpEnemyEffect effect(5);
+
+  std::vector<Enemy*> enemies = {&caster, &empty, &empty};
+  EffectContext context;
+  context.target = &caster;
+  context.enemies = &enemies;
+  effect.Apply(context);
+
+  EXPECT_EQ(caster.GetShield(), 5);
+}
+
 TEST(ShieldMaxHpEnemyEffectTest, DoesNothingWhenTheContextHasNoEnemies) {
   Goblin caster(1, kSeed);
   const ShieldMaxHpEnemyEffect effect(5);
@@ -79,9 +93,10 @@ TEST(ShieldMaxHpEnemyEffectTest, DoesNothingWhenTheContextHasNoEnemies) {
   effect.Apply(context);
 }
 
-TEST(ShieldMaxHpEnemyEffectTest, DoesNothingWhenEveryOtherSlotIsDead) {
+TEST(ShieldMaxHpEnemyEffectTest, DoesNothingWhenNoEnemyIsAlive) {
   Goblin caster(1, kSeed);
   EmptyEnemy empty(0, kSeed);
+  caster.TakeDamage(1000);
   const ShieldMaxHpEnemyEffect effect(5);
 
   std::vector<Enemy*> enemies = {&caster, &empty, &empty};
