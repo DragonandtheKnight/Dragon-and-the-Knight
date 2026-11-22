@@ -175,7 +175,7 @@ gtest_discover_tests(
 )
 
 # Battle tests
-add_executable(combat_tests test/combat/combat_test.cc test/combat/combat_buff_test.cc test/combat/damage_player_effect_test.cc)
+add_executable(combat_tests test/combat/combat_test.cc test/combat/combat_buff_test.cc test/combat/damage_player_effect_test.cc test/combat/heal_target_effect_test.cc test/combat/shield_target_effect_test.cc test/combat/heal_enemies_effect_test.cc test/combat/shield_max_hp_enemy_effect_test.cc)
 target_link_libraries(combat_tests PRIVATE combat GTest::gtest_main)
 gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
 
