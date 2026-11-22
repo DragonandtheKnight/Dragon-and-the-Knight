@@ -24,6 +24,7 @@ class Enemy {
   void ClearShield();
   int GetShield() const;
   bool IsAlive() const;
+  bool IsEmpty() const;
   virtual EnemySkill CalculateMove() = 0;
 
  protected:

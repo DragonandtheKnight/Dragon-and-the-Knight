@@ -24,6 +24,7 @@ target_sources(dragon_knight_game
         src/enemy/shaman.cc
         src/enemy/giant.cc
         src/enemy/dragon.cc
+        src/enemy/empty_enemy.cc
     PUBLIC
     FILE_SET HEADERS
     BASE_DIRS src
@@ -39,6 +40,7 @@ target_sources(dragon_knight_game
         src/enemy/shaman.h
         src/enemy/giant.h
         src/enemy/dragon.h
+        src/enemy/empty_enemy.h
 )
 
 # Card library
@@ -88,6 +90,29 @@ add_library(level_map STATIC
 
 target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(level_map PUBLIC player dragon_knight_game)
+
+# Battle library
+add_library(combat STATIC
+    src/combat/combat.cc
+    src/combat/combat.h
+    src/combat/skill_cards/damage_player_effect.cc
+    src/combat/skill_cards/damage_player_effect.h
+    src/combat/skill_cards/heal_target_effect.cc
+    src/combat/skill_cards/heal_target_effect.h
+    src/combat/skill_cards/shield_target_effect.cc
+    src/combat/skill_cards/shield_target_effect.h
+    src/combat/skill_cards/heal_enemies_effect.cc
+    src/combat/skill_cards/heal_enemies_effect.h
+    src/combat/skill_cards/shield_max_hp_enemy_effect.cc
+    src/combat/skill_cards/shield_max_hp_enemy_effect.h
+)
+target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(combat PUBLIC player buff)
+
+# Buff library
+add_library(buff STATIC src/combat/buff.cc src/combat/buff.h)
+target_include_directories(buff PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(buff PUBLIC card)
 
 # Screens whose headers are listed but whose .cc is not yet here wait for game
 # classes (Card, FloorMap, Battle, Shop). Verifying the header set still
@@ -153,6 +178,7 @@ add_executable(dragon_knight_game_tests
     test/enemy/shaman_test.cc
     test/enemy/giant_test.cc
     test/enemy/dragon_test.cc
+    test/enemy/empty_enemy_test.cc
 )
 target_link_libraries(dragon_knight_game_tests PRIVATE
     dragon_knight_game
@@ -208,6 +234,28 @@ target_link_libraries(non_combat_level_tests PRIVATE
 gtest_discover_tests(
     non_combat_level_tests
     TEST_PREFIX "non_combat."
+    DISCOVERY_MODE PRE_TEST
+)
+
+# Battle tests
+add_executable(combat_tests
+    test/combat/combat_test.cc
+    test/combat/combat_buff_test.cc
+    test/combat/damage_player_effect_test.cc
+    test/combat/heal_target_effect_test.cc
+    test/combat/shield_target_effect_test.cc
+    test/combat/heal_enemies_effect_test.cc
+    test/combat/shield_max_hp_enemy_effect_test.cc
+)
+target_link_libraries(combat_tests PRIVATE combat GTest::gtest_main)
+gtest_discover_tests(combat_tests TEST_PREFIX "combat." DISCOVERY_MODE PRE_TEST)
+
+# Buff tests
+add_executable(buff_tests test/buff/buff_test.cc test/buff/buff_apply_test.cc)
+target_link_libraries(buff_tests PRIVATE buff GTest::gtest_main)
+gtest_discover_tests(
+    buff_tests
+    TEST_PREFIX "buff."
     DISCOVERY_MODE PRE_TEST
 )
 
