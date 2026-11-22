@@ -42,3 +42,21 @@ std::vector<BuffInfo> Buff::GetBuffs() const {
   }
   return result;
 }
+
+void Buff::ApplyBuffs(EffectContext& ctx) {
+  int i;
+  for (i = 0; i < buffs_.size(); i++) {
+    if (buffs_[i].empty()) {
+      buffs_.erase(buffs_.begin() + i);
+      i--;
+      continue;
+    }
+    Card card = buffs_[i].front();
+    card.ApplyEffect(ctx);
+    buffs_[i].erase(buffs_[i].begin());
+    if (buffs_[i].empty()) {
+      buffs_.erase(buffs_.begin() + i);
+      i--;
+    }
+  }
+}

@@ -77,6 +77,7 @@ bool Combat::UseCard(int card_index, int target_slot) {
   ctx.target = target;
   ctx.enemies = &enemies_;
   ctx.deck = &player_.GetDeck();
+  ctx.combat = this;
   card.ApplyEffect(ctx);
   player_.GetDeck().DiscardPlayedCard(card_index);
   return true;
@@ -95,6 +96,7 @@ void Combat::ResolveOneSkill(EnemySkill skill, int slot) {
   ctx.target = target;
   ctx.enemies = &enemies_;
   ctx.deck = nullptr;
+  ctx.combat = this;
   card->ApplyEffect(ctx);
 }
 
@@ -108,20 +110,34 @@ void Combat::ResolveEnemySkills() {
 }
 
 void Combat::EndRound() {
-  ResolveEnemySkills();
   if (!player_.IsAlive()) {
     return;
   }
-  player_.GetDeck().DiscardHand();
-  player_.GetDeck().Draw(kHandSize);
-  player_.ResetShield();
   int slot;
   for (slot = 0; slot < kMaxEnemySlots; slot++) {
     enemies_[slot]->ClearShield();
   }
+  ResolveEnemySkills();
+  if (!player_.IsAlive()) {
+    return;
+  }
+  player_.ResetShield();
+  player_.GetDeck().DiscardHand();
+  player_.GetDeck().Draw(kHandSize);
+  EffectContext ctx;
+  ctx.player = &player_;
+  ctx.target = nullptr;
+  ctx.enemies = &enemies_;
+  ctx.deck = &player_.GetDeck();
+  ctx.combat = this;
+  buff_.ApplyBuffs(ctx);
   current_ap_ = next_ap_;
   next_ap_ = kDefaultApPerTurn;
   for (slot = 0; slot < kMaxEnemySlots; slot++) {
     next_acts_[slot] = enemies_[slot]->CalculateMove();
   }
 }
+
+Buff& Combat::GetBuff() { return buff_; }
+
+const Buff& Combat::GetBuff() const { return buff_; }
