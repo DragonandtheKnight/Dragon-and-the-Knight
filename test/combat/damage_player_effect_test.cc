@@ -1,4 +1,4 @@
-#include "combat/damage_player_effect.h"
+#include "combat/skill_cards/damage_player_effect.h"
 
 #include <cstdint>
 #include <memory>

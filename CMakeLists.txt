@@ -85,7 +85,7 @@ target_include_directories(level_map PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(level_map PUBLIC player)
 
 # Battle library
-add_library(combat STATIC src/combat/combat.cc src/combat/combat.h)
+add_library(combat STATIC src/combat/combat.cc src/combat/combat.h src/combat/skill_cards/damage_player_effect.cc src/combat/skill_cards/damage_player_effect.h)
 target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(combat PUBLIC player buff)
 
