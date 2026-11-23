@@ -303,6 +303,139 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
                    std::make_unique<HealTargetEffect>(20));
       return &card;
     }
+    //------------------------------giant---------------------------------
+    case EnemySkill::kGiantSlamLv1: {
+      static Card card = MakeCard("Giant slam", "Deals 8 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 8,
+                                  std::make_unique<DamagePlayerEffect>(8));
+      return &card;
+    }
+    case EnemySkill::kGiantDefendLv1: {
+      static Card card = MakeCard("Giant defend", "Gives the caster 12 shield.",
+                                  CardRarity::kCommon, CardType::kDefense, 12,
+                                  std::make_unique<ShieldTargetEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kGiantSlamLv2: {
+      static Card card = MakeCard(
+          "Giant slam", "Deals 12 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 12, std::make_unique<DamagePlayerEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kGiantDefendLv2: {
+      static Card card = MakeCard("Giant defend", "Gives the caster 16 shield.",
+                                  CardRarity::kCommon, CardType::kDefense, 16,
+                                  std::make_unique<ShieldTargetEffect>(16));
+      return &card;
+    }
+    case EnemySkill::kGiantChargeLv2: {
+      static Card card = MakeCard(
+          "Giant charge", "Deals 16 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 16, std::make_unique<DamagePlayerEffect>(16));
+      return &card;
+    }
+    case EnemySkill::kGiantSlamLv3: {
+      static Card card = MakeCard(
+          "Giant slam", "Deals 16 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 16, std::make_unique<DamagePlayerEffect>(16));
+      return &card;
+    }
+    case EnemySkill::kGiantDefendLv3: {
+      static Card card = MakeCard("Giant defend", "Gives the caster 20 shield.",
+                                  CardRarity::kCommon, CardType::kDefense, 20,
+                                  std::make_unique<ShieldTargetEffect>(20));
+      return &card;
+    }
+    case EnemySkill::kGiantSuperChargeLv3: {
+      static Card card("Giant super charge",
+                       "Charges up: next move deals 34 damage.",
+                       CardRarity::kCommon, CardType::kSpecial, 0, 0);
+      return &card;
+    }
+    case EnemySkill::kGiantSuperChargeHitLv3: {
+      static Card card =
+          MakeCard("Giant super charge hit", "Deals 34 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 34,
+                   std::make_unique<DamagePlayerEffect>(34));
+      return &card;
+    }
+      //------------------------------dragon---------------------------------
+    case EnemySkill::kDragonClawLv1: {
+      static Card card = MakeCard(
+          "Dragon claw", "Deals 10 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 10, std::make_unique<DamagePlayerEffect>(10));
+      return &card;
+    }
+    case EnemySkill::kDragonBreathLv1: {
+      static Card card =
+          MakeCard("Dragon breath", "Deals 14 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 14,
+                   std::make_unique<DamagePlayerEffect>(14));
+      return &card;
+    }
+    case EnemySkill::kDragonClawLv2: {
+      static Card card = MakeCard(
+          "Dragon claw", "Deals 14 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 14, std::make_unique<DamagePlayerEffect>(14));
+      return &card;
+    }
+    case EnemySkill::kDragonBreathLv2: {
+      static Card card =
+          MakeCard("Dragon breath", "Deals 18 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 18,
+                   std::make_unique<DamagePlayerEffect>(18));
+      return &card;
+    }
+    case EnemySkill::kDragonFlyLv2: {
+      static Card card = MakeCard(
+          "Dragon fly",
+          "Flies up and gets a 999 shield and prepare for a drop slam.",
+          CardRarity::kCommon, CardType::kDefense, 999,
+          std::make_unique<ShieldTargetEffect>(999));
+      return &card;
+    }
+    case EnemySkill::kDragonDropSlamLv2: {
+      static Card card =
+          MakeCard("Dragon drop slam", "Deals 25 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 25,
+                   std::make_unique<DamagePlayerEffect>(25));
+      return &card;
+    }
+    case EnemySkill::kDragonClawLv3: {
+      static Card card = MakeCard(
+          "Dragon claw", "Deals 18 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 18, std::make_unique<DamagePlayerEffect>(18));
+      return &card;
+    }
+    case EnemySkill::kDragonBreathLv3: {
+      static Card card =
+          MakeCard("Dragon breath", "Deals 24 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 24,
+                   std::make_unique<DamagePlayerEffect>(24));
+      return &card;
+    }
+    case EnemySkill::kDragonFlyLv3: {
+      static Card card = MakeCard(
+          "Dragon fly",
+          "Flies up and gets a 999 shield and prepare for a drop slam.",
+          CardRarity::kCommon, CardType::kDefense, 999,
+          std::make_unique<ShieldTargetEffect>(999));
+      return &card;
+    }
+    case EnemySkill::kDragonDropSlamLv3: {
+      static Card card =
+          MakeCard("Dragon drop slam", "Deals 35 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 35,
+                   std::make_unique<DamagePlayerEffect>(35));
+      return &card;
+    }
+    case EnemySkill::kDragonRoarLv3: {
+      static Card card =
+          MakeCard("Dragon roar", "Heals the casting dragon for 75.",
+                   CardRarity::kCommon, CardType::kHeal, 75,
+                   std::make_unique<HealTargetEffect>(75));
+      return &card;
+    }
     default:
       return nullptr;
   }
