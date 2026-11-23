@@ -1,5 +1,3 @@
-#include "combat/combat.h"
-
 #include <cstdint>
 #include <vector>
 
@@ -7,6 +5,7 @@
 #include "card/card_rarity.h"
 #include "card/card_type.h"
 #include "card/deck.h"
+#include "combat/combat.h"
 #include "enemy/dragon.h"
 #include "enemy/empty_enemy.h"
 #include "enemy/giant.h"

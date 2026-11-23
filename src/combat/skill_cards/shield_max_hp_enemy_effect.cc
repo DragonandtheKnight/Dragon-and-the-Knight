@@ -1,5 +1,7 @@
 #include "combat/skill_cards/shield_max_hp_enemy_effect.h"
 
+#include <memory>
+
 #include "card/effect_context.h"
 #include "enemy/enemy.h"
 #include "player/player.h"

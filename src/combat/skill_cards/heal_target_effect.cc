@@ -1,5 +1,7 @@
 #include "combat/skill_cards/heal_target_effect.h"
 
+#include <memory>
+
 #include "card/effect_context.h"
 #include "enemy/enemy.h"
 #include "player/player.h"

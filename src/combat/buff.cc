@@ -1,5 +1,6 @@
 #include "combat/buff.h"
 
+#include <string>
 #include <vector>
 
 void Buff::AddBuff(const Card& card, int count) {

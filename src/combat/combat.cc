@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "card/effect_context.h"
@@ -157,7 +158,7 @@ const Buff& Combat::GetBuff() const { return buff_; }
 
 Card* Combat::GetSkillCard(EnemySkill skill) const {
   switch (skill) {
-      //------------------------------slime---------------------------------
+      // ------------------------------slime---------------------------------
     case EnemySkill::kSlimeSlapLv1: {
       static Card card = MakeCard("Slime slap", "Deals 3 damage to the player.",
                                   CardRarity::kCommon, CardType::kAttack, 3,
@@ -194,7 +195,7 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
           CardType::kHeal, 12, std::make_unique<HealTargetEffect>(12));
       return &card;
     }
-      //------------------------------goblin---------------------------------
+      // ------------------------------goblin---------------------------------
     case EnemySkill::kGoblinHitLv1: {
       static Card card = MakeCard("Goblin hit", "Deals 5 damage to the player.",
                                   CardRarity::kCommon, CardType::kAttack, 5,
@@ -242,7 +243,7 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
                    std::make_unique<DamagePlayerEffect>(22));
       return &card;
     }
-      //------------------------------slime---------------------------------
+      // ------------------------------slime---------------------------------
     case EnemySkill::kShamanCurseLv1: {
       static Card card = MakeCard(
           "Shaman curse", "Deals 5 damage to the player.", CardRarity::kCommon,
@@ -303,7 +304,7 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
                    std::make_unique<HealTargetEffect>(20));
       return &card;
     }
-    //------------------------------giant---------------------------------
+    // ------------------------------giant---------------------------------
     case EnemySkill::kGiantSlamLv1: {
       static Card card = MakeCard("Giant slam", "Deals 8 damage to the player.",
                                   CardRarity::kCommon, CardType::kAttack, 8,
@@ -359,7 +360,7 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
                    std::make_unique<DamagePlayerEffect>(34));
       return &card;
     }
-      //------------------------------dragon---------------------------------
+      // ------------------------------dragon---------------------------------
     case EnemySkill::kDragonClawLv1: {
       static Card card = MakeCard(
           "Dragon claw", "Deals 10 damage to the player.", CardRarity::kCommon,

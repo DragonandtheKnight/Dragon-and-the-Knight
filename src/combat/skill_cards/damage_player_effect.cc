@@ -1,5 +1,7 @@
 #include "combat/skill_cards/damage_player_effect.h"
 
+#include <memory>
+
 #include "card/effect_context.h"
 #include "player/player.h"
 
