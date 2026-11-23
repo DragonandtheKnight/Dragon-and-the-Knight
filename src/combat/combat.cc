@@ -1,8 +1,23 @@
 #include "combat/combat.h"
 
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "card/effect_context.h"
+#include "combat/skill_cards/damage_player_effect.h"
+#include "combat/skill_cards/heal_enemies_effect.h"
+#include "combat/skill_cards/heal_target_effect.h"
+#include "combat/skill_cards/shield_max_hp_enemy_effect.h"
+#include "combat/skill_cards/shield_target_effect.h"
+
+static Card MakeCard(const std::string& name, const std::string& description,
+                     CardRarity rarity, CardType type, int value,
+                     std::unique_ptr<CardEffect> effect) {
+  Card card(name, description, rarity, type, 0, value);
+  card.AddEffect(std::move(effect));
+  return card;
+}
 
 const int Combat::kDefaultApPerTurn;
 
@@ -83,8 +98,6 @@ bool Combat::UseCard(int card_index, int target_slot) {
   return true;
 }
 
-Card* Combat::GetSkillCard(EnemySkill skill) const { return nullptr; }
-
 void Combat::ResolveOneSkill(EnemySkill skill, int slot) {
   Card* card = GetSkillCard(skill);
   if (card == nullptr) {
@@ -141,3 +154,22 @@ void Combat::EndRound() {
 Buff& Combat::GetBuff() { return buff_; }
 
 const Buff& Combat::GetBuff() const { return buff_; }
+
+Card* Combat::GetSkillCard(EnemySkill skill) const {
+  switch (skill) {
+    case EnemySkill::kSlimeSlapLv1: {
+      static Card card = MakeCard("Slime slap", "Deals 3 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 3,
+                                  std::make_unique<DamagePlayerEffect>(3));
+      return &card;
+    }
+    case EnemySkill::kSlimeHealLv1: {
+      static Card card = MakeCard(
+          "Slime heal", "Heals the casting slime for 5.", CardRarity::kCommon,
+          CardType::kHeal, 5, std::make_unique<HealTargetEffect>(5));
+      return &card;
+    }
+    default:
+      return nullptr;
+  }
+}
