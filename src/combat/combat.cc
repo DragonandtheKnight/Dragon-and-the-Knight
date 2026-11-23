@@ -157,6 +157,7 @@ const Buff& Combat::GetBuff() const { return buff_; }
 
 Card* Combat::GetSkillCard(EnemySkill skill) const {
   switch (skill) {
+      //------------------------------slime---------------------------------
     case EnemySkill::kSlimeSlapLv1: {
       static Card card = MakeCard("Slime slap", "Deals 3 damage to the player.",
                                   CardRarity::kCommon, CardType::kAttack, 3,
@@ -167,6 +168,78 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
       static Card card = MakeCard(
           "Slime heal", "Heals the casting slime for 5.", CardRarity::kCommon,
           CardType::kHeal, 5, std::make_unique<HealTargetEffect>(5));
+      return &card;
+    }
+    case EnemySkill::kSlimeSlapLv2: {
+      static Card card = MakeCard("Slime slap", "Deals 5 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 5,
+                                  std::make_unique<DamagePlayerEffect>(5));
+      return &card;
+    }
+    case EnemySkill::kSlimeHealLv2: {
+      static Card card = MakeCard(
+          "Slime heal", "Heals the casting slime for 8.", CardRarity::kCommon,
+          CardType::kHeal, 8, std::make_unique<HealTargetEffect>(8));
+      return &card;
+    }
+    case EnemySkill::kSlimeSlapLv3: {
+      static Card card = MakeCard("Slime slap", "Deals 8 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 8,
+                                  std::make_unique<DamagePlayerEffect>(8));
+      return &card;
+    }
+    case EnemySkill::kSlimeHealLv3: {
+      static Card card = MakeCard(
+          "Slime heal", "Heals the casting slime for 12.", CardRarity::kCommon,
+          CardType::kHeal, 12, std::make_unique<HealTargetEffect>(12));
+      return &card;
+    }
+      //------------------------------goblin---------------------------------
+    case EnemySkill::kGoblinHitLv1: {
+      static Card card = MakeCard("Goblin hit", "Deals 5 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 5,
+                                  std::make_unique<DamagePlayerEffect>(5));
+      return &card;
+    }
+    case EnemySkill::kGoblinHitLv2: {
+      static Card card = MakeCard("Goblin hit", "Deals 8 damage to the player.",
+                                  CardRarity::kCommon, CardType::kAttack, 8,
+                                  std::make_unique<DamagePlayerEffect>(8));
+      return &card;
+    }
+    case EnemySkill::kGoblinHardSlamLv2: {
+      static Card card =
+          MakeCard("Goblin hard slam", "Deals 12 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 12,
+                   std::make_unique<DamagePlayerEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kGoblinHitLv3: {
+      static Card card = MakeCard(
+          "Goblin hit", "Deals 12 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 12, std::make_unique<DamagePlayerEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kGoblinHardSlamLv3: {
+      static Card card =
+          MakeCard("Goblin hard slam", "Deals 18 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 18,
+                   std::make_unique<DamagePlayerEffect>(18));
+      return &card;
+    }
+    case EnemySkill::kGoblinDashLv3: {
+      static Card card =
+          MakeCard("Goblin dash",
+                   "Gives the caster 15 shield, next move would deal 22 dmg",
+                   CardRarity::kCommon, CardType::kDefense, 15,
+                   std::make_unique<ShieldTargetEffect>(15));
+      return &card;
+    }
+    case EnemySkill::kGoblinDashAttackLv3: {
+      static Card card =
+          MakeCard("Goblin dash attack", "Deals 22 damage to the player.",
+                   CardRarity::kCommon, CardType::kAttack, 22,
+                   std::make_unique<DamagePlayerEffect>(22));
       return &card;
     }
     default:
