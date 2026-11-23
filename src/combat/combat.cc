@@ -242,6 +242,67 @@ Card* Combat::GetSkillCard(EnemySkill skill) const {
                    std::make_unique<DamagePlayerEffect>(22));
       return &card;
     }
+      //------------------------------slime---------------------------------
+    case EnemySkill::kShamanCurseLv1: {
+      static Card card = MakeCard(
+          "Shaman curse", "Deals 5 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 5, std::make_unique<DamagePlayerEffect>(5));
+      return &card;
+    }
+    case EnemySkill::kShamanHealAllLv1: {
+      static Card card = MakeCard(
+          "Shaman heal all", "Heals every enemy for 10% of its max health.",
+          CardRarity::kCommon, CardType::kHeal, 10,
+          std::make_unique<HealEnemiesEffect>(10));
+      return &card;
+    }
+    case EnemySkill::kShamanCurseLv2: {
+      static Card card = MakeCard(
+          "Shaman curse", "Deals 8 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 8, std::make_unique<DamagePlayerEffect>(8));
+      return &card;
+    }
+    case EnemySkill::kShamanHealAllLv2: {
+      static Card card = MakeCard(
+          "Shaman heal all", "Heals every enemy for 15% of its max health.",
+          CardRarity::kCommon, CardType::kHeal, 15,
+          std::make_unique<HealEnemiesEffect>(15));
+      return &card;
+    }
+    case EnemySkill::kShamanGiveShieldLv2: {
+      static Card card = MakeCard("Shaman give shield",
+                                  "Gives the healthiest enemy 12 shield.",
+                                  CardRarity::kCommon, CardType::kHeal, 12,
+                                  std::make_unique<ShieldMaxHpEnemyEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kShamanCurseLv3: {
+      static Card card = MakeCard(
+          "Shaman curse", "Deals 12 damage to the player.", CardRarity::kCommon,
+          CardType::kAttack, 12, std::make_unique<DamagePlayerEffect>(12));
+      return &card;
+    }
+    case EnemySkill::kShamanHealAllLv3: {
+      static Card card = MakeCard(
+          "Shaman heal all", "Heals every enemy for 20% of its max health.",
+          CardRarity::kCommon, CardType::kHeal, 20,
+          std::make_unique<HealEnemiesEffect>(20));
+      return &card;
+    }
+    case EnemySkill::kShamanGiveShieldLv3: {
+      static Card card = MakeCard("Shaman give shield",
+                                  "Gives the healthiest enemy 16 shield.",
+                                  CardRarity::kCommon, CardType::kHeal, 16,
+                                  std::make_unique<ShieldMaxHpEnemyEffect>(16));
+      return &card;
+    }
+    case EnemySkill::kShamanHealSelfLv3: {
+      static Card card =
+          MakeCard("Shaman heal self", "Heals the casting shaman for 20.",
+                   CardRarity::kCommon, CardType::kHeal, 20,
+                   std::make_unique<HealTargetEffect>(20));
+      return &card;
+    }
     default:
       return nullptr;
   }
