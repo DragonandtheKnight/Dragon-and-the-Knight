@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "card/card.h"
@@ -306,6 +307,55 @@ TEST(CombatUseCardTest, RejectsATargetSlotOutOfRange) {
 
   EXPECT_EQ(combat.GetCurrentAp(), ap_before);
   EXPECT_EQ(player.GetDeck().GetHand().size(), hand_before);
+}
+
+namespace {
+
+// Removes another card from the hand while the played card is being resolved,
+// standing in for any effect that touches the deck mid-resolution.
+class DiscardFirstCardEffect : public CardEffect {
+ public:
+  void Apply(EffectContext& context) const override {
+    context.deck->DiscardPlayedCard(0);
+  }
+
+  std::unique_ptr<CardEffect> Clone() const override {
+    return std::make_unique<DiscardFirstCardEffect>();
+  }
+};
+
+}  // namespace
+
+TEST(CombatUseCardTest, DiscardsThePlayedCardWhenAnEffectChangesTheHand) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+
+  Card card_a("A", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
+              1, 0);
+  Card card_b("B", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
+              1, 0);
+  card_b.AddEffect(std::make_unique<DiscardFirstCardEffect>());
+  Card card_c("C", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
+              1, 0);
+  player.GetDeck().AddCard(card_a);
+  player.GetDeck().AddCard(card_b);
+  player.GetDeck().AddCard(card_c);
+
+  combat.StartBattle();
+
+  const std::vector<Card>& hand = player.GetDeck().GetHand();
+  ASSERT_EQ(hand.size(), 3U);
+  // The shuffle decides which card sits where, so identify by position: play
+  // index 1, its effect drops index 0, and index 2 must survive.
+  const std::string kept_name = hand[2].GetName();
+
+  ASSERT_TRUE(combat.UseCard(1, -1));
+
+  ASSERT_EQ(hand.size(), 1U);
+  EXPECT_EQ(hand[0].GetName(), kept_name);
 }
 
 TEST(CombatEndRoundTest, DrawsANewHand) {
