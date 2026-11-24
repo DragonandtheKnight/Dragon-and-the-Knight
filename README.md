@@ -42,8 +42,7 @@ Please check online version by following URL ⬇️
 
 ## Class Diagram
 
-<img width="3209" height="3723" alt="shapes at 26-10-24 16 54 44" src="https://github.com/user-attachments/assets/f481bbf6-c273-4300-9aa0-ad42ff62cba8" />
-
+<img width="17261" height="11629" alt="Class UML_under_10MB" src="https://github.com/user-attachments/assets/98f2757e-279c-406d-a980-3dd82332e4dd" />
 
 [Class UML White Board](https://www.tldraw.com/p/SBypERcPwHj0Lrw89Z-Dw)
 
@@ -58,6 +57,21 @@ The Card class stores information about each card including its name, type, cost
 The Enemy class represents the monsters that players fight during the game. Different enemies can have different abilities.
 
 Our class diagram also shows different relationships between classes, including inheritance, composition, and association. These relationships help us connect different parts of the game.
+
+## SOLID UML Change Log
+
+We revised our class diagram to apply the SOLID principles. The new class diagram and an explanation of each change (which principle we applied, how we applied it, and how it improved our code) are in the change log:
+
+**[SOLID UML Change Log](docs/solid-uml-changelog.md)**
+
+To record a new change, use the [SOLID change entry template](docs/templates/solid-change-template.md).
+
+
+## Standup Meetings
+
+We hold regular standup meetings to share progress, plan the next tasks, and discuss blockers. Notes from every meeting are kept in a separate repository:
+
+**[Standup Meetings](https://github.com/DragonandtheKnight/Standup-Meetings)**
 
 ## Testing
 
