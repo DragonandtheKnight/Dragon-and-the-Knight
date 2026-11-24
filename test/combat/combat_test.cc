@@ -1,5 +1,6 @@
 #include "combat/combat.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -516,4 +517,12 @@ TEST(CombatResolveOneSkillTest, SurvivesAMissingSkillCard) {
   combat.EndRound();
 
   EXPECT_EQ(player.GetHp(), 100);
+}
+
+// std::max takes its arguments by const reference, so this odr-uses the
+// constant and needs a definition. A static const member initialized in the
+// class body has none, which is why this failed to link before the fix.
+TEST(CombatConstantsTest, ConstantsAreUsableByReference) {
+  EXPECT_EQ(std::max(Combat::kHandSize, Combat::kMaxEnemySlots), 5);
+  EXPECT_EQ(std::max(Combat::kDefaultApPerTurn, 1), 3);
 }
