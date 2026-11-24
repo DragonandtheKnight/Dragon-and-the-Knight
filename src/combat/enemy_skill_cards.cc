@@ -303,7 +303,9 @@ Card* GetEnemySkillCard(EnemySkill skill) {
                    std::make_unique<HealTargetEffect>(75));
       return &card;
     }
-    default:
+    case EnemySkill::kAlreadyDead: {
       return nullptr;
+    }
   }
+  return nullptr;
 }
