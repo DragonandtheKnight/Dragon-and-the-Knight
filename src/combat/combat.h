@@ -10,9 +10,9 @@
 
 class Combat {
  public:
-  static const int kDefaultApPerTurn = 3;
-  static const int kMaxEnemySlots = 4;
-  static const int kHandSize = 5;
+  static constexpr int kDefaultApPerTurn = 3;
+  static constexpr int kMaxEnemySlots = 4;
+  static constexpr int kHandSize = 5;
   Combat(Player& player, const std::vector<Enemy*>& slots);
   void EndRound();
   int GetCurrentAp() const;

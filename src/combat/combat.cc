@@ -5,8 +5,6 @@
 #include "card/effect_context.h"
 #include "combat/enemy_skill_cards.h"
 
-const int Combat::kDefaultApPerTurn;
-
 Combat::Combat(Player& player, const std::vector<Enemy*>& slots)
     : player_(player),
       enemies_(slots),
