@@ -34,6 +34,14 @@ void FillDeck(Player& player, int count) {
 }  // namespace
 
 // The level 1 slime always slaps while it is at full health, so this damage is
+// kAlreadyDead is the one skill that maps to no card. The resolver reads a
+// null card as "this slot has nothing to do", so every other skill must still
+// resolve to a real card.
+TEST(SkillCardTableTest, DeadSlotsMapToNoCard) {
+  EXPECT_EQ(GetEnemySkillCard(EnemySkill::kAlreadyDead), nullptr);
+  EXPECT_NE(GetEnemySkillCard(EnemySkill::kSlimeSlapLv1), nullptr);
+}
+
 // deterministic and does not depend on the seed.
 TEST(SkillCardTableTest, SlimeSlapLv1DamagesThePlayer) {
   Player player("Knight", kPlayerMaxHp, kSeed);
