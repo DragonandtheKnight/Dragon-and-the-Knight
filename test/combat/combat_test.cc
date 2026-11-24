@@ -334,28 +334,32 @@ TEST(CombatUseCardTest, DiscardsThePlayedCardWhenAnEffectChangesTheHand) {
   Combat combat(player, slots);
 
   Card card_a("A", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
-              1, 0);
+              0, 0);
   Card card_b("B", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
-              1, 0);
+              0, 0);
   card_b.AddEffect(std::make_unique<DiscardFirstCardEffect>());
   Card card_c("C", "A card for tests", CardRarity::kCommon, CardType::kSpecial,
-              1, 0);
-  player.GetDeck().AddCard(card_a);
-  player.GetDeck().AddCard(card_b);
-  player.GetDeck().AddCard(card_c);
+              0, 0);
 
-  combat.StartBattle();
+  // StartBattle and Draw skip the shuffle, and Draw takes from the back of the
+  // draw pile, so adding the cards in reverse gives hand = [A, B, C].
+  Deck& deck = player.GetDeck();
+  deck.AddCard(card_c);
+  deck.AddCard(card_b);
+  deck.AddCard(card_a);
+  deck.StartBattle();
+  deck.Draw(3);
 
   const std::vector<Card>& hand = player.GetDeck().GetHand();
   ASSERT_EQ(hand.size(), 3U);
-  // The shuffle decides which card sits where, so identify by position: play
-  // index 1, its effect drops index 0, and index 2 must survive.
-  const std::string kept_name = hand[2].GetName();
+  ASSERT_EQ(hand[0].GetName(), "A");
+  ASSERT_EQ(hand[1].GetName(), "B");
+  ASSERT_EQ(hand[2].GetName(), "C");
 
   ASSERT_TRUE(combat.UseCard(1, -1));
 
   ASSERT_EQ(hand.size(), 1U);
-  EXPECT_EQ(hand[0].GetName(), kept_name);
+  EXPECT_EQ(hand[0].GetName(), "C");
 }
 
 TEST(CombatEndRoundTest, DrawsANewHand) {

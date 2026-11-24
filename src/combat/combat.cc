@@ -53,8 +53,7 @@ bool Combat::UseCard(int card_index, int target_slot) {
   if (card_index < 0 || static_cast<std::size_t>(card_index) >= hand.size()) {
     return false;
   }
-  const Card& card = hand[card_index];
-  int cost = card.GetCost();
+  int cost = hand[card_index].GetCost();
   if (current_ap_ < cost) {
     return false;
   }
@@ -71,14 +70,15 @@ bool Combat::UseCard(int card_index, int target_slot) {
     }
   }
   current_ap_ -= cost;
+  Card played = hand[card_index];
+  player_.GetDeck().DiscardPlayedCard(card_index);
   EffectContext ctx;
   ctx.player = &player_;
   ctx.target = target;
   ctx.enemies = &enemies_;
   ctx.deck = &player_.GetDeck();
   ctx.combat = this;
-  card.ApplyEffect(ctx);
-  player_.GetDeck().DiscardPlayedCard(card_index);
+  played.ApplyEffect(ctx);
   return true;
 }
 
