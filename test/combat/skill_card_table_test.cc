@@ -6,6 +6,7 @@
 #include "card/card_type.h"
 #include "card/deck.h"
 #include "combat/combat.h"
+#include "combat/enemy_skill_cards.h"
 #include "enemy/dragon.h"
 #include "enemy/empty_enemy.h"
 #include "enemy/giant.h"
@@ -368,6 +369,20 @@ TEST(SkillCardTableTest, ShamanLv3CursesHealsOrShieldsTheHealthiestEnemy) {
   EXPECT_GT(curse_seen, 0);
   EXPECT_GT(heal_seen, 0);
   EXPECT_GT(shield_seen, 0);
+}
+
+// Both shaman shield skills are defensive, but they used to be typed as heal,
+// so the UI would draw them as healing intents.
+TEST(SkillCardTableTest, ShamanShieldSkillsAreTypedAsDefense) {
+  Card* lv2 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv2);
+  Card* lv3 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv3);
+
+  ASSERT_NE(lv2, nullptr);
+  ASSERT_NE(lv3, nullptr);
+  EXPECT_TRUE(lv2->GetType() == CardType::kDefense);
+  EXPECT_TRUE(lv3->GetType() == CardType::kDefense);
+  EXPECT_EQ(lv2->GetValue(), 12);
+  EXPECT_EQ(lv3->GetValue(), 16);
 }
 
 // The level 1 giant either slams the player for 8 or raises a 12 shield.
