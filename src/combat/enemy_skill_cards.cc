@@ -109,7 +109,7 @@ Card* GetEnemySkillCard(EnemySkill skill) {
                    std::make_unique<DamagePlayerEffect>(22));
       return &card;
     }
-      // ------------------------------slime---------------------------------
+      // ------------------------------shaman---------------------------------
     case EnemySkill::kShamanCurseLv1: {
       static Card card = MakeCard(
           "Shaman curse", "Deals 5 damage to the player.", CardRarity::kCommon,
@@ -139,7 +139,7 @@ Card* GetEnemySkillCard(EnemySkill skill) {
     case EnemySkill::kShamanGiveShieldLv2: {
       static Card card = MakeCard("Shaman give shield",
                                   "Gives the healthiest enemy 12 shield.",
-                                  CardRarity::kCommon, CardType::kHeal, 12,
+                                  CardRarity::kCommon, CardType::kDefense, 12,
                                   std::make_unique<ShieldMaxHpEnemyEffect>(12));
       return &card;
     }
@@ -159,7 +159,7 @@ Card* GetEnemySkillCard(EnemySkill skill) {
     case EnemySkill::kShamanGiveShieldLv3: {
       static Card card = MakeCard("Shaman give shield",
                                   "Gives the healthiest enemy 16 shield.",
-                                  CardRarity::kCommon, CardType::kHeal, 16,
+                                  CardRarity::kCommon, CardType::kDefense, 16,
                                   std::make_unique<ShieldMaxHpEnemyEffect>(16));
       return &card;
     }
