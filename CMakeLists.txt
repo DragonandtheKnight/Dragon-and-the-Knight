@@ -126,16 +126,6 @@ add_library(combat STATIC
 target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(combat PUBLIC player buff)
 
-# Main executable
-# Game/Player integration is still unfinished.
-add_executable(dragon_and_the_knight EXCLUDE_FROM_ALL
-    src/main.cpp
-)
-target_link_libraries(dragon_and_the_knight PRIVATE
-    player
-    level_map
-)
-
 # UI library
 # Screens whose headers are listed but whose .cc is not yet here wait for game
 # classes (Card, FloorMap, Battle, Shop). Verifying the header set still
