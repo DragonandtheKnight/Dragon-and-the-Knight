@@ -608,6 +608,23 @@ TEST(CombatApAccumulationTest, AddNextApRaisesTheNextHandoff) {
   EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
 }
 
+TEST(CombatApAccumulationTest, EventUpgradeReachesTheNextBattle) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  player.IncreaseMaxEnergy(1);
+  ASSERT_EQ(player.GetMaxEnergy(), 11);
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  combat.StartBattle();
+
+  for (int i = 0; i < 4; ++i) {
+    combat.EndRound();
+  }
+
+  EXPECT_EQ(combat.GetCurrentAp(), 11);
+}
 
 namespace {
 
