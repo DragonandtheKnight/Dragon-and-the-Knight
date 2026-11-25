@@ -293,3 +293,41 @@ TEST(EnemyTest, NegativeShieldDoesNotAmplifyTheNextHit) {
   EXPECT_EQ(enemy.GetHp(), 25);
   EXPECT_EQ(enemy.GetShield(), 0);
 }
+
+// A corpse is not a target: once hp reached zero, a late shield effect that was
+// already queued for this slot must not leave a shield bar floating over a dead
+// enemy. Before this guard the shield was added to the corpse and the next hit
+// was absorbed by it.
+TEST(EnemyTest, ADefeatedEnemyIgnoresShield) {
+  StubEnemy enemy(EnemyType::kSlime, 30, 1, 1, 7);
+  enemy.TakeDamage(30);
+  enemy.AddShield(10);
+  EXPECT_EQ(enemy.GetShield(), 0);
+  EXPECT_FALSE(enemy.IsAlive());
+}
+
+// A cap of zero is not a monster with no hit points to lose, it is a slot that
+// never held a monster. Enemy uses the cap to decide whether it is alive, which
+// is what lets EmptyEnemy be born dead without overriding IsAlive().
+TEST(EnemyTest, AZeroCapEnemyIsBornDead) {
+  StubEnemy enemy(EnemyType::kSlime, 0, 1, 1, 7);
+  EXPECT_FALSE(enemy.IsAlive());
+  EXPECT_EQ(enemy.GetHp(), 0);
+}
+
+// A real monster is never "empty"; the question is answered by the type the
+// enemy carries, so no caller has to compare pointers to detect a placeholder.
+TEST(EnemyTest, ARealEnemyIsNotEmpty) {
+  StubEnemy enemy(EnemyType::kSlime, 30, 1, 1, 7);
+  EXPECT_FALSE(enemy.IsEmpty());
+}
+
+// Healing a corpse is ignored (this already holds today, kept as a regression
+// lock now that the whole corpse rule is written down in one place).
+TEST(EnemyTest, ADefeatedEnemyIgnoresHealing) {
+  StubEnemy enemy(EnemyType::kSlime, 30, 1, 1, 7);
+  enemy.TakeDamage(30);
+  enemy.Heal(10);
+  EXPECT_EQ(enemy.GetHp(), 0);
+  EXPECT_FALSE(enemy.IsAlive());
+}
