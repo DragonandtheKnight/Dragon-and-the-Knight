@@ -27,3 +27,74 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir build --output-on-failure
+
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      # The baseline lists every compiled line with a zero count, so a source
+      # file that no test touches still shows up as 0% instead of vanishing.
+      - name: Capture baseline
+        run: >
+          lcov --capture --initial --directory build
+          --output-file baseline.info --ignore-errors mismatch
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Collect coverage
+        run: |
+          lcov --capture --directory build --output-file tests.info \
+            --ignore-errors mismatch
+          lcov --add-tracefile baseline.info --add-tracefile tests.info \
+            --output-file all.info
+          lcov --extract all.info "$PWD/src/*" --output-file coverage.info
+          genhtml coverage.info --output-directory coverage_html
+
+      - name: Write summary
+        run: |
+          {
+            echo "## Code coverage"
+            echo
+            echo '```'
+            lcov --list coverage.info | sed "s|$PWD/||"
+            echo '```'
+            echo
+            echo "Line-by-line HTML report: [coverage_html artifact]($RUN_URL)"
+          } > coverage.md
+          cat coverage.md >> "$GITHUB_STEP_SUMMARY"
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage_html
+          path: coverage_html
+
+      # A fork's token is read-only, so the comment is limited to same-repo PRs.
+      - name: Comment on the pull request
+        if: >
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          gh pr comment "$PR" --edit-last --body-file coverage.md ||
+            gh pr comment "$PR" --body-file coverage.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}

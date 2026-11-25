@@ -12,6 +12,16 @@ set(FTXUI_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
 set(FTXUI_QUIET ON CACHE BOOL "" FORCE)
 add_subdirectory(lib/ftxui EXCLUDE_FROM_ALL)
 
+# Declared after FTXUI so the third-party library is not instrumented.
+option(ENABLE_COVERAGE "Instrument the build for gcov/lcov reports" OFF)
+if(ENABLE_COVERAGE)
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        message(FATAL_ERROR "ENABLE_COVERAGE needs GCC or Clang")
+    endif()
+    add_compile_options(--coverage -O0)
+    add_link_options(--coverage)
+endif()
+
 # Core game and enemy implementations
 add_library(dragon_knight_game STATIC)
 target_sources(dragon_knight_game
