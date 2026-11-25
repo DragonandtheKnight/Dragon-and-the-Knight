@@ -132,7 +132,7 @@ TEST_F(CombatBuffTest, EnemySkillAlsoReceivesTheCurrentCombat) {
   EXPECT_EQ(calls, 1);
 }
 
-TEST_F(CombatBuffTest, BuffReceivesContextAfterEnemySkillsBeforeApHandoff) {
+TEST_F(CombatBuffTest, BuffReceivesContextAfterEnemySkillsAndApHandoff) {
   std::vector<int> order;
   skill_ = MakeCard("Skill", [&](EffectContext&) { order.push_back(1); });
   Start();
@@ -146,7 +146,8 @@ TEST_F(CombatBuffTest, BuffReceivesContextAfterEnemySkillsBeforeApHandoff) {
     EXPECT_EQ(ctx.deck, &player_.GetDeck());
     ASSERT_NE(ctx.enemies, nullptr);
     EXPECT_EQ(*ctx.enemies, slots_);
-    EXPECT_EQ(combat_.GetCurrentAp(), ap_before);
+    EXPECT_EQ(combat_.GetCurrentAp(),
+              ap_before + Combat::kDefaultApPerTurn);
     EXPECT_EQ(ctx.deck->GetHand().size(),
               static_cast<std::size_t>(Combat::kHandSize));
   });
@@ -155,7 +156,27 @@ TEST_F(CombatBuffTest, BuffReceivesContextAfterEnemySkillsBeforeApHandoff) {
   combat_.EndRound();
 
   EXPECT_EQ(order, (std::vector<int>{1, 2}));
-  EXPECT_EQ(combat_.GetCurrentAp(), Combat::kDefaultApPerTurn);
+  EXPECT_EQ(combat_.GetCurrentAp(), ap_before + Combat::kDefaultApPerTurn);
+}
+
+TEST_F(CombatBuffTest, BuffNextApIsNotWipedByTheHandoff) {
+  const Card tick = MakeCard("Tick", [&](EffectContext& ctx) {
+    if (ctx.combat != nullptr) {
+      ctx.combat->AddNextAp(1);
+    }
+  });
+  Start();
+  combat_.GetBuff().AddBuff(tick, 1);
+
+  combat_.EndRound();
+
+  EXPECT_EQ(combat_.GetNextAp(), Combat::kDefaultApPerTurn + 1);
+
+  const int ap_after_first = combat_.GetCurrentAp();
+  combat_.EndRound();
+
+  EXPECT_EQ(combat_.GetCurrentAp(),
+            ap_after_first + Combat::kDefaultApPerTurn + 1);
 }
 
 TEST_F(CombatBuffTest, ClearsOldEnemyShieldBeforeSkillAndKeepsNewShield) {

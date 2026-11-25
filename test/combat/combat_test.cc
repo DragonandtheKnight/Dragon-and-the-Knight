@@ -473,10 +473,11 @@ TEST(CombatEndRoundTest, GrantsTheNextApForTheNewRound) {
   FillDeck(player, 20);
   combat.StartBattle();
   ASSERT_TRUE(combat.UseCard(0, -1));
+  const int ap_before = combat.GetCurrentAp();
 
   combat.EndRound();
 
-  EXPECT_EQ(combat.GetCurrentAp(), Combat::kDefaultApPerTurn);
+  EXPECT_EQ(combat.GetCurrentAp(), ap_before + Combat::kDefaultApPerTurn);
   EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
 }
 
@@ -512,6 +513,101 @@ TEST(CombatEndRoundTest, DoesNothingWhenThePlayerIsAlreadyDead) {
 
   EXPECT_EQ(goblin.GetShield(), 10);
 }
+
+TEST(CombatApAccumulationTest, CarriesTheLeftoverApIntoTheNextRound) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  combat.StartBattle();
+
+  EXPECT_EQ(combat.GetCurrentAp(), Combat::kDefaultApPerTurn);
+
+  combat.EndRound();
+
+  EXPECT_EQ(combat.GetCurrentAp(), 2 * Combat::kDefaultApPerTurn);
+
+  combat.EndRound();
+
+  EXPECT_EQ(combat.GetCurrentAp(), 3 * Combat::kDefaultApPerTurn);
+}
+
+TEST(CombatApAccumulationTest, AddsNextApOnTopOfTheLeftoverAp) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  combat.StartBattle();
+  ASSERT_TRUE(combat.UseCard(0, -1));
+  const int ap_left = combat.GetCurrentAp();
+  ASSERT_EQ(ap_left, Combat::kDefaultApPerTurn - 1);
+
+  combat.EndRound();
+
+  EXPECT_EQ(combat.GetCurrentAp(), ap_left + Combat::kDefaultApPerTurn);
+}
+
+TEST(CombatApAccumulationTest, StopsAtThePlayerMaxEnergy) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  player.ReduceMaxEnergy(5);
+  combat.StartBattle();
+  ASSERT_EQ(player.GetMaxEnergy(), 5);
+
+  for (int i = 0; i < 4; ++i) {
+    combat.EndRound();
+    EXPECT_EQ(combat.GetCurrentAp(), player.GetMaxEnergy());
+  }
+}
+
+TEST(CombatApAccumulationTest, FollowsThePlayerMaxEnergyWhenItIsRaised) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  player.IncreaseMaxEnergy(2);
+  combat.StartBattle();
+  ASSERT_EQ(player.GetMaxEnergy(), 12);
+
+  for (int i = 0; i < 5; ++i) {
+    combat.EndRound();
+  }
+
+  EXPECT_EQ(combat.GetCurrentAp(), 12);
+}
+
+TEST(CombatApAccumulationTest, AddNextApRaisesTheNextHandoff) {
+  Player player("Knight", 100, kSeed);
+  EmptyEnemy empty(0, kSeed);
+
+  std::vector<Enemy*> slots = {&empty, &empty, &empty, &empty};
+  Combat combat(player, slots);
+  FillDeck(player, 40);
+  combat.StartBattle();
+  const int ap_left = combat.GetCurrentAp();
+  ASSERT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
+
+  combat.AddNextAp(1);
+
+  EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn + 1);
+
+  combat.EndRound();
+
+  EXPECT_EQ(combat.GetCurrentAp(),
+            ap_left + Combat::kDefaultApPerTurn + 1);
+  EXPECT_EQ(combat.GetNextAp(), Combat::kDefaultApPerTurn);
+}
+
 
 namespace {
 
