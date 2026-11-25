@@ -17,6 +17,7 @@ class Combat {
   void EndRound();
   int GetCurrentAp() const;
   int GetNextAp() const;
+  void AddNextAp(int amount);
   Enemy* GetEnemy(int slot) const;
   EnemySkill GetNextAct(int slot) const;
   bool IsOver() const;

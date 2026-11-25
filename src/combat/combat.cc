@@ -28,6 +28,13 @@ int Combat::GetCurrentAp() const { return current_ap_; }
 
 int Combat::GetNextAp() const { return next_ap_; }
 
+void Combat::AddNextAp(int amount) {
+  if (amount <= 0) {
+    return;
+  }
+  next_ap_ += amount;
+}
+
 Enemy* Combat::GetEnemy(int slot) const {
   if (slot < 0 || slot >= kMaxEnemySlots) {
     throw std::invalid_argument("Combat::GetEnemy: slot is out of range");
@@ -149,9 +156,12 @@ void Combat::EndRound() {
   ctx.enemies = &enemies_;
   ctx.deck = &player_.GetDeck();
   ctx.combat = this;
-  buff_.ApplyBuffs(ctx);
-  current_ap_ = next_ap_;
+  current_ap_ += next_ap_;
+  if (current_ap_ > player_.GetMaxEnergy()) {
+    current_ap_ = player_.GetMaxEnergy();
+  }
   next_ap_ = kDefaultApPerTurn;
+  buff_.ApplyBuffs(ctx);
   for (slot = 0; slot < kMaxEnemySlots; slot++) {
     next_acts_[slot] = enemies_[slot]->CalculateMove();
   }
