@@ -49,7 +49,7 @@ class SkillCardStub : public Combat {
       : Combat(player, slots), skill_(skill) {}
 
  protected:
-  Card* GetSkillCard(EnemySkill) const override { return skill_; }
+  const Card* GetSkillCard(EnemySkill) const override { return skill_; }
 
  private:
   Card* skill_;

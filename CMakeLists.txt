@@ -125,6 +125,9 @@ add_library(combat STATIC
 )
 target_include_directories(combat PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(combat PUBLIC player buff)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(combat PRIVATE -Wswitch)
+endif()
 
 # UI library
 # Screens whose headers are listed but whose .cc is not yet here wait for game

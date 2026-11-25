@@ -99,6 +99,9 @@ bool Combat::UseCard(int card_index, int target_slot) {
     }
   }
   current_ap_ -= cost;
+  // The card leaves the hand before it resolves so an effect that changes the
+  // hand cannot shift its index. It is already in the discard pile while it
+  // resolves, so a draw effect that reshuffles can draw it back.
   Card played = hand[card_index];
   player_.GetDeck().DiscardPlayedCard(card_index);
   EffectContext ctx;
@@ -112,7 +115,7 @@ bool Combat::UseCard(int card_index, int target_slot) {
 }
 
 void Combat::ResolveOneSkill(EnemySkill skill, int slot) {
-  Card* card = GetSkillCard(skill);
+  const Card* card = GetSkillCard(skill);
   if (card == nullptr) {
     return;
   }
@@ -171,6 +174,6 @@ Buff& Combat::GetBuff() { return buff_; }
 
 const Buff& Combat::GetBuff() const { return buff_; }
 
-Card* Combat::GetSkillCard(EnemySkill skill) const {
+const Card* Combat::GetSkillCard(EnemySkill skill) const {
   return GetEnemySkillCard(skill);
 }

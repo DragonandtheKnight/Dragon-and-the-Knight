@@ -666,7 +666,7 @@ class SkillCardStub : public Combat {
       : Combat(player, slots), card_(card) {}
 
  protected:
-  Card* GetSkillCard(EnemySkill skill) const override {
+  const Card* GetSkillCard(EnemySkill skill) const override {
     static_cast<void>(skill);
     return card_;
   }

@@ -4,4 +4,4 @@
 
 class Card;
 
-Card* GetEnemySkillCard(EnemySkill skill);
+const Card* GetEnemySkillCard(EnemySkill skill);

@@ -14,6 +14,7 @@ class Combat {
   static constexpr int kMaxEnemySlots = 4;
   static constexpr int kHandSize = 5;
   Combat(Player& player, const std::vector<Enemy*>& slots);
+  virtual ~Combat() = default;
   void EndRound();
   int GetCurrentAp() const;
   int GetNextAp() const;
@@ -33,7 +34,7 @@ class Combat {
   int current_ap_;
   int next_ap_;
   std::vector<EnemySkill> next_acts_;
-  virtual Card* GetSkillCard(EnemySkill skill) const;
+  virtual const Card* GetSkillCard(EnemySkill skill) const;
   void ResolveOneSkill(EnemySkill skill, int slot);
   void ResolveEnemySkills();
 };

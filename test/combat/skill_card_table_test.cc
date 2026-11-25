@@ -33,7 +33,6 @@ void FillDeck(Player& player, int count) {
 }
 }  // namespace
 
-// The level 1 slime always slaps while it is at full health, so this damage is
 // kAlreadyDead is the one skill that maps to no card. The resolver reads a
 // null card as "this slot has nothing to do", so every other skill must still
 // resolve to a real card.
@@ -42,6 +41,7 @@ TEST(SkillCardTableTest, DeadSlotsMapToNoCard) {
   EXPECT_NE(GetEnemySkillCard(EnemySkill::kSlimeSlapLv1), nullptr);
 }
 
+// The level 1 slime always slaps while it is at full health, so this damage is
 // deterministic and does not depend on the seed.
 TEST(SkillCardTableTest, SlimeSlapLv1DamagesThePlayer) {
   Player player("Knight", kPlayerMaxHp, kSeed);
@@ -382,8 +382,8 @@ TEST(SkillCardTableTest, ShamanLv3CursesHealsOrShieldsTheHealthiestEnemy) {
 // Both shaman shield skills are defensive, but they used to be typed as heal,
 // so the UI would draw them as healing intents.
 TEST(SkillCardTableTest, ShamanShieldSkillsAreTypedAsDefense) {
-  Card* lv2 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv2);
-  Card* lv3 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv3);
+  const Card* lv2 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv2);
+  const Card* lv3 = GetEnemySkillCard(EnemySkill::kShamanGiveShieldLv3);
 
   ASSERT_NE(lv2, nullptr);
   ASSERT_NE(lv3, nullptr);
