@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -81,6 +82,75 @@ TEST(CombatConstructorTest, NextActsStartAsAlreadyDead) {
   for (int slot = 0; slot < Combat::kMaxEnemySlots; ++slot) {
     EXPECT_EQ(combat.GetNextAct(slot), EnemySkill::kAlreadyDead);
   }
+}
+
+TEST(CombatConstructorTest, RejectsASlotVectorThatIsTooShort) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty};
+
+  EXPECT_THROW(Combat(player, slots), std::invalid_argument);
+}
+
+TEST(CombatConstructorTest, RejectsASlotVectorThatIsTooLong) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty, &empty};
+
+  EXPECT_THROW(Combat(player, slots), std::invalid_argument);
+}
+
+TEST(CombatConstructorTest, RejectsANullSlot) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, nullptr, &empty, &empty};
+
+  EXPECT_THROW(Combat(player, slots), std::invalid_argument);
+}
+
+// A slot index is either 0 to kMaxEnemySlots - 1 or it is a caller bug, so the
+// accessors report any other index instead of indexing past the vector.
+TEST(CombatSlotAccessTest, GetEnemyRejectsANegativeIndex) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+
+  EXPECT_THROW(combat.GetEnemy(-1), std::invalid_argument);
+}
+
+TEST(CombatSlotAccessTest, GetEnemyRejectsAnIndexPastTheLastSlot) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+
+  EXPECT_THROW(combat.GetEnemy(Combat::kMaxEnemySlots), std::invalid_argument);
+}
+
+TEST(CombatSlotAccessTest, GetNextActRejectsANegativeIndex) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+
+  EXPECT_THROW(combat.GetNextAct(-1), std::invalid_argument);
+}
+
+TEST(CombatSlotAccessTest, GetNextActRejectsAnIndexPastTheLastSlot) {
+  Player player("Knight", 100, kSeed);
+  Goblin goblin(1, kSeed);
+  EmptyEnemy empty(0, kSeed);
+  std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
+  Combat combat(player, slots);
+
+  EXPECT_THROW(combat.GetNextAct(Combat::kMaxEnemySlots), std::invalid_argument);
 }
 
 TEST(CombatIsOverTest, IsNotOverWhileAnEnemyLives) {
