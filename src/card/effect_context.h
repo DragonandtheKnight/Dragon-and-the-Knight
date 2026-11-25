@@ -5,6 +5,7 @@
 class Player;
 class Enemy;
 class Deck;
+class Combat;
 
 // All pointers are borrowed and may be null when that resource is unavailable.
 // The caller keeps the objects and optional enemy list alive during execution.
@@ -15,4 +16,5 @@ struct EffectContext {
   Enemy* target = nullptr;
   const std::vector<Enemy*>* enemies = nullptr;
   Deck* deck = nullptr;
+  Combat* combat = nullptr;
 };

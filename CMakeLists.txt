@@ -176,6 +176,46 @@ add_executable(card_tests test/card/card_test.cc)
 target_link_libraries(card_tests PRIVATE card GTest::gtest_main)
 gtest_discover_tests(card_tests TEST_PREFIX "card." DISCOVERY_MODE PRE_TEST)
 
+# CardEffect TDD
+# Example: cmake -S . -B <build-dir> -DCARD_TDD_POISON=ON
+#          cmake --build <build-dir> --target card_tdd_poison
+# Future modules deliberately remain compile-time RED until proposed APIs exist.
+function(add_card_tdd module enabled)
+    string(TOUPPER "${module}" upper)
+    option(CARD_TDD_${upper} "Build ${module} tests; read source contract first" ${enabled})
+    if(CARD_TDD_${upper})
+        add_executable(card_tdd_${module} ${ARGN})
+        target_link_libraries(card_tdd_${module} PRIVATE player GTest::gtest_main)
+        gtest_discover_tests(card_tdd_${module} TEST_PREFIX "card_tdd.${module}."
+            DISCOVERY_MODE PRE_TEST PROPERTIES LABELS "card_tdd;${module}")
+    else()
+        message(STATUS "Card TDD ${module}: OFF (not compiled/executed)")
+    endif()
+endfunction()
+# Keep basic implementations in card to preserve their public library linkage.
+# Each option gates both the effect source and its tests.
+function(add_basic_card_tdd module)
+    string(TOUPPER "${module}" upper)
+    option(CARD_TDD_${upper} "Build existing ${module} implementation and tests" ON)
+    if(CARD_TDD_${upper})
+        target_sources(card PRIVATE src/card/${module}_effect.cc)
+    endif()
+    add_card_tdd(${module} ON test/card/${module}_effect_test.cc)
+endfunction()
+add_basic_card_tdd(damage)
+add_basic_card_tdd(block)
+add_basic_card_tdd(heal)
+# Planned API modules are independently opt-in.
+add_card_tdd(target OFF test/card/effect_target_test.cc)
+add_card_tdd(multi OFF test/card/card_multi_effect_test.cc)
+add_card_tdd(poison OFF test/card/poison_effect_test.cc)
+add_card_tdd(bleeding OFF test/card/bleeding_effect_test.cc)
+add_card_tdd(hot OFF test/card/hot_effect_test.cc)
+add_card_tdd(buff OFF test/card/buff_test.cc)
+add_card_tdd(calculation OFF test/card/buff_calculation_test.cc)
+add_card_tdd(status OFF test/card/status_manager_test.cc)
+add_card_tdd(factory OFF test/card/enemy_card_factory_test.cc)
+
 # Deck tests
 add_executable(deck_tests test/card/deck_test.cc)
 target_link_libraries(deck_tests PRIVATE deck GTest::gtest_main)
