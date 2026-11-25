@@ -1,5 +1,6 @@
 #include "combat/combat.h"
 
+#include <stdexcept>
 #include <vector>
 
 #include "card/effect_context.h"
@@ -10,15 +11,36 @@ Combat::Combat(Player& player, const std::vector<Enemy*>& slots)
       enemies_(slots),
       current_ap_(0),
       next_ap_(0),
-      next_acts_(kMaxEnemySlots, EnemySkill::kAlreadyDead) {}
+      next_acts_(kMaxEnemySlots, EnemySkill::kAlreadyDead) {
+  if (enemies_.size() != static_cast<std::size_t>(Combat::kMaxEnemySlots)) {
+    throw std::invalid_argument(
+        "Combat::Combat: expected exactly 4 enemy slots");
+  }
+  for (Enemy* enemy : enemies_) {
+    if (enemy == nullptr) {
+      throw std::invalid_argument(
+          "Combat::Combat: enemy slot must not be null");
+    }
+  }
+}
 
 int Combat::GetCurrentAp() const { return current_ap_; }
 
 int Combat::GetNextAp() const { return next_ap_; }
 
-Enemy* Combat::GetEnemy(int slot) const { return enemies_[slot]; }
+Enemy* Combat::GetEnemy(int slot) const {
+  if (slot < 0 || slot >= kMaxEnemySlots) {
+    throw std::invalid_argument("Combat::GetEnemy: slot is out of range");
+  }
+  return enemies_[slot];
+}
 
-EnemySkill Combat::GetNextAct(int slot) const { return next_acts_[slot]; }
+EnemySkill Combat::GetNextAct(int slot) const {
+  if (slot < 0 || slot >= kMaxEnemySlots) {
+    throw std::invalid_argument("Combat::GetNextAct: slot is out of range");
+  }
+  return next_acts_[slot];
+}
 
 bool Combat::IsOver() const {
   if (!player_.IsAlive()) {

@@ -150,7 +150,8 @@ TEST(CombatSlotAccessTest, GetNextActRejectsAnIndexPastTheLastSlot) {
   std::vector<Enemy*> slots = {&goblin, &empty, &empty, &empty};
   Combat combat(player, slots);
 
-  EXPECT_THROW(combat.GetNextAct(Combat::kMaxEnemySlots), std::invalid_argument);
+  EXPECT_THROW(combat.GetNextAct(Combat::kMaxEnemySlots),
+               std::invalid_argument);
 }
 
 TEST(CombatIsOverTest, IsNotOverWhileAnEnemyLives) {
