@@ -87,6 +87,7 @@ target_link_libraries(player PUBLIC deck)
 # without linking the Card library back to Player.
 add_library(card_effects STATIC
     src/card/block_effect.cc
+    src/card/card_factory.cc
     src/card/damage_effect.cc
     src/card/effect_targets.cc
     src/card/heal_effect.cc
@@ -280,6 +281,8 @@ if(CARD_TDD_MULTI)
     target_link_libraries(card_tdd_multi PRIVATE combat)
 endif()
 
+add_card_tdd(player_factory ON test/card/card_factory_test.cc)
+
 # Planned API modules are independently opt-in.
 add_card_tdd(poison OFF test/card/poison_effect_test.cc)
 add_card_tdd(bleeding OFF test/card/bleeding_effect_test.cc)
@@ -288,7 +291,6 @@ add_card_tdd(buff OFF test/card/buff_test.cc)
 add_card_tdd(calculation OFF test/card/buff_calculation_test.cc)
 add_card_tdd(status OFF test/card/status_manager_test.cc)
 add_card_tdd(factory OFF test/card/enemy_card_factory_test.cc)
-add_card_tdd(player_factory OFF test/card/card_factory_test.cc)
 
 # Deck tests
 add_executable(deck_tests
