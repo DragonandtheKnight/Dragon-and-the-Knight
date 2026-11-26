@@ -288,6 +288,7 @@ add_card_tdd(buff OFF test/card/buff_test.cc)
 add_card_tdd(calculation OFF test/card/buff_calculation_test.cc)
 add_card_tdd(status OFF test/card/status_manager_test.cc)
 add_card_tdd(factory OFF test/card/enemy_card_factory_test.cc)
+add_card_tdd(player_factory OFF test/card/card_factory_test.cc)
 
 # Deck tests
 add_executable(deck_tests
