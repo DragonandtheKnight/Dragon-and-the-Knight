@@ -1,10 +1,12 @@
 #include "card/card.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "card/effect_context.h"
 
@@ -55,13 +57,39 @@ void Card::AddEffect(std::unique_ptr<CardEffect> effect) {
   effects_.push_back(std::move(effect));
 }
 
+std::vector<TargetType> Card::GetEffectTargetTypes() const {
+  std::vector<TargetType> target_types;
+  target_types.reserve(effects_.size());
+  for (const auto& effect : effects_) {
+    target_types.push_back(effect->GetTargetType());
+  }
+  return target_types;
+}
+
+bool Card::EffectUsesExplicitTargeting(std::size_t index) const {
+  return effects_.at(index)->UsesExplicitTargeting();
+}
+
 void Card::ApplyEffect(EffectContext& context) const {
   for (const auto& effect : effects_) {
     effect->Apply(context);
   }
 }
 
+void Card::ApplyEffect(std::vector<EffectContext>& contexts) const {
+  if (contexts.size() != effects_.size()) {
+    throw std::invalid_argument(
+        "Card::ApplyEffect: expected one context per effect");
+  }
+
+  for (std::size_t i = 0; i < effects_.size(); ++i) {
+    effects_[i]->Apply(contexts[i]);
+  }
+}
+
 void Card::ApplyEffect(Player& player, Enemy& enemy) const {
-  EffectContext context{&player, &enemy};
+  EffectContext context;
+  context.player = &player;
+  context.target = &enemy;
   ApplyEffect(context);
 }

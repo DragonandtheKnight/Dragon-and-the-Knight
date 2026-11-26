@@ -61,6 +61,7 @@ add_library(card
     src/card/card_type.h
     src/card/card_effect.h
     src/card/effect_context.h
+    src/card/target_type.h
 )
 target_include_directories(card PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
@@ -81,6 +82,17 @@ target_sources(player
         src/player/player.h
 )
 target_link_libraries(player PUBLIC deck)
+
+# Concrete effects use both Player and Enemy. Keep Card available to Deck
+# without linking the Card library back to Player.
+add_library(card_effects STATIC
+    src/card/block_effect.cc
+    src/card/card_factory.cc
+    src/card/damage_effect.cc
+    src/card/effect_targets.cc
+    src/card/heal_effect.cc
+)
+target_link_libraries(card_effects PUBLIC player)
 
 # Level and map library
 add_library(level_map STATIC
@@ -250,32 +262,28 @@ gtest_discover_tests(
 # Future modules deliberately remain compile-time RED until proposed APIs exist.
 function(add_card_tdd module enabled)
     string(TOUPPER "${module}" upper)
-    option(CARD_TDD_${upper} "Build ${module} tests; read source contract first" ${enabled})
+    option(CARD_TDD_${upper} "Build ${module} CardEffect tests" ${enabled})
     if(CARD_TDD_${upper})
         add_executable(card_tdd_${module} ${ARGN})
-        target_link_libraries(card_tdd_${module} PRIVATE player GTest::gtest_main)
+        target_link_libraries(card_tdd_${module} PRIVATE card_effects GTest::gtest_main)
         gtest_discover_tests(card_tdd_${module} TEST_PREFIX "card_tdd.${module}."
             DISCOVERY_MODE PRE_TEST PROPERTIES LABELS "card_tdd;${module}")
     else()
         message(STATUS "Card TDD ${module}: OFF (not compiled/executed)")
     endif()
 endfunction()
-# Keep basic implementations in card to preserve their public library linkage.
-# Each option gates both the effect source and its tests.
-function(add_basic_card_tdd module)
-    string(TOUPPER "${module}" upper)
-    option(CARD_TDD_${upper} "Build existing ${module} implementation and tests" ON)
-    if(CARD_TDD_${upper})
-        target_sources(card PRIVATE src/card/${module}_effect.cc)
-    endif()
-    add_card_tdd(${module} ON test/card/${module}_effect_test.cc)
-endfunction()
-add_basic_card_tdd(damage)
-add_basic_card_tdd(block)
-add_basic_card_tdd(heal)
+add_card_tdd(damage ON test/card/damage_effect_test.cc)
+add_card_tdd(block ON test/card/block_effect_test.cc)
+add_card_tdd(heal ON test/card/heal_effect_test.cc)
+add_card_tdd(target ON test/card/effect_target_test.cc)
+add_card_tdd(multi ON test/card/card_multi_effect_test.cc)
+if(CARD_TDD_MULTI)
+    target_link_libraries(card_tdd_multi PRIVATE combat)
+endif()
+
+add_card_tdd(player_factory ON test/card/card_factory_test.cc)
+
 # Planned API modules are independently opt-in.
-add_card_tdd(target OFF test/card/effect_target_test.cc)
-add_card_tdd(multi OFF test/card/card_multi_effect_test.cc)
 add_card_tdd(poison OFF test/card/poison_effect_test.cc)
 add_card_tdd(bleeding OFF test/card/bleeding_effect_test.cc)
 add_card_tdd(hot OFF test/card/hot_effect_test.cc)

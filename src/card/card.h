@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "card/card_effect.h"
 #include "card/card_rarity.h"
 #include "card/card_type.h"
+#include "card/target_type.h"
 
 class Player;
 class Enemy;
@@ -31,9 +33,14 @@ class Card {
 
   // Takes ownership; throws std::invalid_argument for a null effect.
   void AddEffect(std::unique_ptr<CardEffect> effect);
+  std::vector<TargetType> GetEffectTargetTypes() const;
+  // Uses the same effect order as GetEffectTargetTypes().
+  bool EffectUsesExplicitTargeting(std::size_t index) const;
   // Executes attached effects in insertion order. Type/value remain metadata;
   // they do not create implicit effects or spend AP.
   void ApplyEffect(EffectContext& context) const;
+  // Takes one context per effect. Throws before execution on a size mismatch.
+  void ApplyEffect(std::vector<EffectContext>& contexts) const;
   // Compatibility overload: supplies only player and target. Effects requiring
   // the enemy collection or deck must use the context overload instead.
   void ApplyEffect(Player& player, Enemy& enemy) const;
